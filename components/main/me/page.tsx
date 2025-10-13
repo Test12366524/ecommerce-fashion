@@ -753,7 +753,7 @@ export default function ProfilePage() {
 
   /* --------------------- UI --------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-[#DFF19D]/10 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-white to-[#DFF19D]/10 pt-10">
       <div className="container mx-auto px-6 lg:px-12 pb-12">
         {/* Header */}
         <div className="mb-8">
