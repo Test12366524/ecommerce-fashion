@@ -8,12 +8,12 @@ import {
   Package,
   Tag,
   BookDashed,
+  PackagePlus,
 } from "lucide-react";
 import Header from "@/components/admin-components/header";
 import Sidebar from "@/components/admin-components/sidebar";
 import { AdminLayoutProps, MenuItem } from "@/types";
 import { IconLibraryPhoto, IconNews } from "@tabler/icons-react";
-import { FaMoneyBill } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import type { User } from "@/types/user";
 
@@ -73,6 +73,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
       label: "Produk",
       icon: <Package className="h-5 w-5" />,
       href: "/admin/product-list", 
+    },
+    {
+      id: "product-variant",
+      label: "Produk Variant",
+      icon: <PackagePlus className="h-5 w-5" />,
+      href: "/admin/product-variant", 
     },
     {
       id: "gallery",
