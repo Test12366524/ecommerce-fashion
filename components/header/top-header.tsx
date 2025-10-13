@@ -266,7 +266,7 @@ export default function Header() {
 
   const menuItems = [
     { name: t.howToOrder, href: "/how-to-order" },
-    { name: t.service, href: "/service" },
+    { name: t.service, href: "/new-arrivals" },
     { name: t.products, href: "/product" },
     { name: t.testimonials, href: "/best-seller" },
   ];
@@ -485,7 +485,7 @@ export default function Header() {
         {/* Row 2: centered nav links */}
         <div className="border-t border-gray-100">
           <div className="container mx-auto px-4 lg:px-6">
-            <div className="flex h-12 items-center justify-center overflow-x-auto">
+            <div className="flex h-[4rem] items-center justify-center overflow-x-auto">
               <div className="flex items-center gap-8 md:gap-12 text-[12px] md:text-[13px] font-semibold tracking-[0.12em] uppercase">
                 {menuItems.map((item) => (
                   <Link
