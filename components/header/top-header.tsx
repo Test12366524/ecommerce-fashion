@@ -268,7 +268,7 @@ export default function Header() {
     { name: t.howToOrder, href: "/how-to-order" },
     { name: t.service, href: "/service" },
     { name: t.products, href: "/product" },
-    { name: t.testimonials, href: "/testimonials" },
+    { name: t.testimonials, href: "/best-seller" },
   ];
 
   // Mapping warna hover untuk setiap menu sesuai palet
