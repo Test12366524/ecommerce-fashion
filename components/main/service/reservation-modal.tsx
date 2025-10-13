@@ -26,6 +26,7 @@ import { useGetCurrentUserQuery } from "@/services/auth.service";
 import { useCreateTransactionFrontendMutation } from "@/services/admin/transaction.service";
 import { useGetUserAddressListQuery } from "@/services/address.service";
 import type { Address } from "@/types/address";
+import { CreateTransactionFrontendRequest } from "@/types/admin/transaction";
 // import { CreateTransactionFrontendRequest } from "@/types/admin/transaction";
 
 interface ReservationPayload {
@@ -233,9 +234,8 @@ export default function ReservationModal({
       );
 
       // ----- panggil mutasi (ganti yang lama) -----
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await createTransactionFrontend(
-        payload as unknown as any
+        payload as unknown as CreateTransactionFrontendRequest
       ).unwrap();
 
       if (
