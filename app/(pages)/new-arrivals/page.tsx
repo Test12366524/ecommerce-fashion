@@ -2,6 +2,7 @@ import ProductListingLayout from "@/components/product-listing-layout";
 import { DEMO_PRODUCTS } from "@/lib/demo-product";
 
 const chips = [
+  { label: "Semua", slug: "semua" },
   { label: "Stok Menipis", slug: "low-stock" },
   { label: "Terbaru", slug: "newest" },
 ];

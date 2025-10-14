@@ -150,15 +150,13 @@ export default function ProductListingLayout({
           p.tags?.some((t) => t.toLowerCase().includes(q))
       );
     }
-
     // chip filtering
-    if (chip) {
+    if (chip && chip !== "semua") {
       if (chip === "low-stock") {
         data = data.filter(
           (p) => (p.stock ?? 0) > 0 && (p.stock ?? 0) <= lowStockAt
         );
       } else if (chip === "newest") {
-        // gunakan tag 'terbaru' jika ada, fallback: id terbesar
         const byTag = data.filter((p) =>
           p.tags?.some((t) => t.toLowerCase() === "terbaru")
         );
@@ -321,29 +319,39 @@ export default function ProductListingLayout({
               <div className="pointer-events-none absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-rose-50 to-transparent" />
               <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-rose-50 to-transparent" />
               <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
-                {chips.map((c) => (
-                  <button
-                    key={c.slug}
-                    onClick={() =>
-                      setChip((prev) => (prev === c.slug ? null : c.slug))
-                    }
-                    className={`group inline-flex snap-start items-center gap-2 rounded-2xl border px-3 py-2 text-sm shadow-sm transition ${
-                      chip === c.slug
-                        ? "border-rose-600 bg-rose-600 text-white"
-                        : "border-rose-100 bg-white text-gray-700 hover:border-rose-300"
-                    }`}
-                    aria-pressed={chip === c.slug}
-                  >
-                    <span className="relative inline-block h-6 w-6 overflow-hidden rounded-full ring-1 ring-rose-200">
-                      <img
-                        src={IMG_FALLBACK}
-                        alt={c.label}
-                        className="h-full w-full object-cover"
-                      />
-                    </span>
-                    {c.label}
-                  </button>
-                ))}
+                {chips.map((c) => {
+                  const isActive =
+                    (chip === null && c.slug === "semua") || chip === c.slug;
+                  return (
+                    <button
+                      key={c.slug}
+                      onClick={() =>
+                        setChip((prev) =>
+                          c.slug === "semua"
+                            ? null
+                            : prev === c.slug
+                            ? null
+                            : c.slug
+                        )
+                      }
+                      className={`group inline-flex snap-start items-center gap-2 rounded-2xl border px-3 py-2 text-sm shadow-sm transition ${
+                        isActive
+                          ? "border-rose-600 bg-rose-600 text-white"
+                          : "border-rose-100 bg-white text-gray-700 hover:border-rose-300"
+                      }`}
+                      aria-pressed={isActive}
+                    >
+                      <span className="relative inline-block h-6 w-6 overflow-hidden rounded-full ring-1 ring-rose-200">
+                        <img
+                          src={IMG_FALLBACK}
+                          alt={c.label}
+                          className="h-full w-full object-cover"
+                        />
+                      </span>
+                      {c.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
