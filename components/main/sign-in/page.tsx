@@ -194,7 +194,7 @@ export default function LoginPage() {
     setIsSendingResetLink(true);
     try {
       const response = await fetch(
-        "https://cms.yameiyashop.com/api/v1/password/reset",
+        "https://cms.BLACKBOXINCshop.com/api/v1/password/reset",
         {
           method: "POST",
           headers: {
@@ -253,7 +253,7 @@ export default function LoginPage() {
     setIsVerifyingOtp(true);
     try {
       const response = await fetch(
-        "https://cms.yameiyashop.com/api/v1/password/reset/validate-otp",
+        "https://cms.BLACKBOXINCshop.com/api/v1/password/reset/validate-otp",
         {
           method: "POST",
           headers: {
@@ -575,7 +575,9 @@ export default function LoginPage() {
                 <span className="text-[#e84741] font-bold text-xl">Y</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">YAMEIYA Shop</h1>
+                <h1 className="text-2xl font-bold text-white">
+                  BLACKBOXINC Shop
+                </h1>
                 <p className="text-white/80 text-sm">Shop Minimalis & Fresh</p>
               </div>
             </div>

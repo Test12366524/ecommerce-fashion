@@ -20,7 +20,7 @@ const DEFAULT_IMAGES = [
 
 export default function RunningCarousel({
   images,
-  heightClass = "h-96",
+  heightClass = "h-[60vh]",
   intervalMs = 3500,
   showArrows = true,
   showDots = true,

@@ -352,7 +352,7 @@ export default function Header() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedLanguage = localStorage.getItem("yameiya-language");
+      const savedLanguage = localStorage.getItem("BLACKBOXINC-language");
       if (savedLanguage === "id" || savedLanguage === "en") {
         setLanguage(savedLanguage);
       }
@@ -366,7 +366,7 @@ export default function Header() {
     setLanguage(newLang);
     switchLang(newLang);
     if (typeof window !== "undefined") {
-      localStorage.setItem("yameiya-language", newLang);
+      localStorage.setItem("BLACKBOXINC-language", newLang);
       window.dispatchEvent(
         new CustomEvent("languageChanged", { detail: newLang })
       );
@@ -430,7 +430,7 @@ export default function Header() {
                 {/* If you want to keep image, show it subtle; else rely on text brand */}
                 <div className="sr-only">
                   <Image
-                    src="/images/new/logo/yameiya-Shop.png"
+                    src="/images/new/logo/BLACKBOXINC-Shop.png"
                     alt="BLACKBOXINC"
                     width={120}
                     height={48}

@@ -105,7 +105,7 @@ const FaqPage = () => {
         {
           question: "Apakah ada promo khusus untuk pelanggan baru?",
           answer:
-            "Pelanggan baru mendapatkan diskon 10% untuk pembelian pertama dengan kode voucher WELCOMEYAMEIYA.",
+            "Pelanggan baru mendapatkan diskon 10% untuk pembelian pertama dengan kode voucher WELCOMEBLACKBOXINC.",
         },
         {
           question: "Apakah ada bundle atau paket hemat?",
@@ -133,7 +133,7 @@ const FaqPage = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
             Temukan jawaban cepat seputar produk, layanan, dan pengalaman
             berbelanja bersama{" "}
-            <span className="text-[#E53935] font-semibold">YAMEIYA</span>.
+            <span className="text-[#E53935] font-semibold">BLACKBOXINC</span>.
           </p>
         </div>
       </section>

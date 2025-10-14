@@ -44,10 +44,10 @@ import {
   useGetCitiesQuery,
   useGetDistrictsQuery,
 } from "@/services/shop/open-shop/open-shop.service";
-import { 
+import {
   useGetTransactionListQuery,
   useGetTransactionByIdQuery,
-  useGetTransactionShopByIdQuery
+  useGetTransactionShopByIdQuery,
 } from "@/services/admin/transaction.service";
 import Swal from "sweetalert2";
 import { mapTxnStatusToOrderStatus, OrderStatus } from "@/lib/status-order";
@@ -129,18 +129,18 @@ interface ApiTransaction {
 // Add mutation hook for uploading payment proof
 const useUploadPaymentProofMutation = () => {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const uploadPaymentProof = async (transactionId: string, file: File) => {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append('payment_proof', file);
-      formData.append('_method', 'PUT');
+      formData.append("payment_proof", file);
+      formData.append("_method", "PUT");
 
       const response = await fetch(
-        `https://cms.yameiyashop.com/api/v1/public/transaction/${transactionId}/manual?_method=PUT`,
+        `https://cms.BLACKBOXINCshop.com/api/v1/public/transaction/${transactionId}/manual?_method=PUT`,
         {
-          method: 'POST', // Using POST with _method=PUT for form-data
+          method: "POST", // Using POST with _method=PUT for form-data
           body: formData,
           headers: {
             // Don't set Content-Type, let browser set it for FormData
@@ -149,7 +149,7 @@ const useUploadPaymentProofMutation = () => {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to upload payment proof');
+        throw new Error("Failed to upload payment proof");
       }
 
       const data = await response.json();
@@ -173,21 +173,26 @@ const pickImageUrl = (d?: ApiTransactionDetail): string => {
 };
 
 // Helper function to get product image from shop details
-const getProductImageFromShopDetails = (product: {
-  image?: string;
-  image_2?: string;
-  image_3?: string;
-  image_4?: string;
-  image_5?: string;
-  image_6?: string;
-  image_7?: string;
-  media?: Array<{ original_url?: string }>;
-} | null | undefined): string => {
+const getProductImageFromShopDetails = (
+  product:
+    | {
+        image?: string;
+        image_2?: string;
+        image_3?: string;
+        image_4?: string;
+        image_5?: string;
+        image_6?: string;
+        image_7?: string;
+        media?: Array<{ original_url?: string }>;
+      }
+    | null
+    | undefined
+): string => {
   if (!product) return "/api/placeholder/80/80";
-  
+
   // Try direct image field first
   if (product.image) return product.image;
-  
+
   // Try image_2, image_3, etc.
   if (product.image_2) return product.image_2;
   if (product.image_3) return product.image_3;
@@ -195,13 +200,13 @@ const getProductImageFromShopDetails = (product: {
   if (product.image_5) return product.image_5;
   if (product.image_6) return product.image_6;
   if (product.image_7) return product.image_7;
-  
+
   // Try media array
   if (product.media && product.media.length > 0) {
     const firstMedia = product.media[0]?.original_url;
     if (firstMedia) return firstMedia;
   }
-  
+
   return "/api/placeholder/80/80";
 };
 

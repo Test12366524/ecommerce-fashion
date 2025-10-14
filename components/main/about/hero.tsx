@@ -67,8 +67,8 @@ const Hero = () => {
             <div className="relative">
               <div className="relative w-full h-[600px] rounded-3xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/images/new/hero/yameiya-night-cream.webp"
-                  alt="YAMEIYA Shop Story"
+                  src="/images/new/hero/BLACKBOXINC-night-cream.webp"
+                  alt="BLACKBOXINC Shop Story"
                   fill
                   className="object-cover"
                   priority

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "BLACKBOXINC",
   description: "Raih Kulit Sehat & Bersinar denganBLACKBOXINC Shop",
   icons: {
-    icon: "/images/new/logo/yameiya-Shop.png",
+    icon: "/images/new/logo/BLACKBOXINC-Shop.png",
   },
 };
 

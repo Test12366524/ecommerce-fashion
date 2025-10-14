@@ -57,7 +57,7 @@ export default function Footer() {
                 <div className="flex items-center gap-3 mb-3">
                   <div>
                     <Image
-                      src="/images/new/logo/yameiya-Shop.png"
+                      src="/images/new/logo/BLACKBOXINC-Shop.png"
                       alt="Logo"
                       width={75}
                       height={40}
@@ -102,7 +102,7 @@ export default function Footer() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="w-4 h-4 text-[#E53935]" />
-                    <span>yameiyaShop@gmail.com</span>
+                    <span>BLACKBOXINCShop@gmail.com</span>
                   </div>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function Footer() {
                 <div className="flex gap-4">
                   <a
                     className="w-10 h-10 bg-white border border-gray-200 rounded-2xl flex items-center justify-center text-gray-600 hover:bg-pink-500 hover:text-white"
-                    href="https://www.instagram.com/yameiya_Shop?igsh=MTN4MTE0anA2aXB4aA=="
+                    href="https://www.instagram.com/BLACKBOXINC_Shop?igsh=MTN4MTE0anA2aXB4aA=="
                     target="_blank"
                     rel="noopener noreferrer"
                   >

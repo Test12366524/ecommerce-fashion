@@ -6,7 +6,7 @@ const story = [
   {
     year: "2018",
     title: "Awal Mula",
-    desc: "YAMEIYA Shop lahir dari keresahan akan Shop yang kurang ramah kulit sensitif di Indonesia.",
+    desc: "BLACKBOXINC Shop lahir dari keresahan akan Shop yang kurang ramah kulit sensitif di Indonesia.",
     icon: <Heart className="w-6 h-6 text-white" />,
   },
   {
@@ -35,7 +35,7 @@ export default function BrandStory() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl lg:text-5xl font-bold text-[#6B6B6B] mb-4">
-            Perjalanan <span className="text-[#E53935]">YAMEIYA Shop</span>
+            Perjalanan <span className="text-[#E53935]">BLACKBOXINC Shop</span>
           </h2>
           <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
             Dari awal berdiri hingga kini, kami terus konsisten menghadirkan

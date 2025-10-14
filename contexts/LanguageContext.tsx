@@ -21,13 +21,15 @@ export const LanguageProvider = ({
   const [lang, setLang] = useState<Language>("id");
 
   useEffect(() => {
-    const saved = localStorage.getItem("yameiya-language") as Language | null;
+    const saved = localStorage.getItem(
+      "BLACKBOXINC-language"
+    ) as Language | null;
     if (saved) setLang(saved);
   }, []);
 
   const switchLang = (newLang: Language) => {
     setLang(newLang);
-    localStorage.setItem("yameiya-language", newLang);
+    localStorage.setItem("BLACKBOXINC-language", newLang);
   };
 
   return (

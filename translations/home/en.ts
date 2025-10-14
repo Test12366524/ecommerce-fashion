@@ -20,7 +20,7 @@ const translations = {
   "cta-title-1": "Start Your Shop",
   "cta-title-2": "Today",
   "cta-subtitle":
-    "Feel the hydration, brightness, and health of your skin withBLACKBOXINC Shop. Discover the products that best suit your skin’s needs.",
+    "Feel the fit, confidence, and style with BLACKBOXINC. Discover pieces that suit your vibe.",
   "cta-btn": "Shop Now",
   "testimony-title": "What Do They Say?",
 };

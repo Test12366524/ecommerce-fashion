@@ -295,7 +295,7 @@ export default function HowToOrderPage() {
           {/* Title */}
           <h1 className="text-4xl lg:text-6xl font-bold text-[#000000] mb-6">
             Cara Pesan di
-            <span className="block text-[#6B6B6B]">YAMEIYA Shop</span>
+            <span className="block text-[#6B6B6B]">BLACKBOXINC Shop</span>
           </h1>
 
           {/* Subtitle */}
@@ -609,7 +609,7 @@ export default function HowToOrderPage() {
                   <Mail className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-white/90">support@yameiya.id</p>
+                <p className="text-white/90">support@BLACKBOXINC.id</p>
                 <p className="text-sm text-white/70">Respon dalam 2 jam</p>
               </div>
 

@@ -20,7 +20,7 @@ const translations = {
   "cta-title-1": "Mulai Perawatan Kulitmu",
   "cta-title-2": "Hari Ini",
   "cta-subtitle":
-    "Rasakan kelembapan, kecerahan, dan kesehatan kulit bersamaBLACKBOXINC Shop. Temukan produk yang cocok untuk kebutuhan kulitmu.",
+    "Rasakan fit, percaya diri, dan gaya bersama BLACKBOXINC. Temukan busana yang paling pas untukmu.",
   "cta-btn": "Belanja Sekarang",
   "testimony-title": "Apa Kata Mereka?",
 };

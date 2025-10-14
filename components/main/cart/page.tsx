@@ -51,7 +51,11 @@ import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import { useGetUserAddressListQuery } from "@/services/address.service";
 import type { Address } from "@/types/address";
-import { CreateTransactionFrontendRequest, CreateTransactionRequest, PaymentType } from "@/types/admin/transaction";
+import {
+  CreateTransactionFrontendRequest,
+  CreateTransactionRequest,
+  PaymentType,
+} from "@/types/admin/transaction";
 
 const STORAGE_KEY = "cart-storage";
 
@@ -415,8 +419,8 @@ export default function CartPage() {
   };
 
   const applyCoupon = () => {
-    if (couponCode.trim().toLowerCase() === "yameiya10") {
-      setAppliedCoupon("YAMEIYA10");
+    if (couponCode.trim().toLowerCase() === "BLACKBOXINC10") {
+      setAppliedCoupon("BLACKBOXINC10");
       setCouponCode("");
     }
   };
@@ -468,7 +472,7 @@ export default function CartPage() {
     0
   );
   const discount =
-    appliedCoupon === "YAMEIYA10" ? Math.round(subtotal * 0.1) : 0;
+    appliedCoupon === "BLACKBOXINC10" ? Math.round(subtotal * 0.1) : 0;
 
   const shippingCost = shippingMethod?.cost ?? 0;
 
@@ -1199,7 +1203,9 @@ export default function CartPage() {
                         name="payment-type"
                         value="midtrans"
                         checked={paymentType === "midtrans"}
-                        onChange={(e) => setPaymentType(e.currentTarget.value as PaymentType)}
+                        onChange={(e) =>
+                          setPaymentType(e.currentTarget.value as PaymentType)
+                        }
                         className="form-radio text-[#6B6B6B] h-4 w-4"
                       />
                       <div>
@@ -1216,7 +1222,9 @@ export default function CartPage() {
                         name="payment-type"
                         value="manual"
                         checked={paymentType === "manual"}
-                        onChange={(e) => setPaymentType(e.currentTarget.value as PaymentType)}
+                        onChange={(e) =>
+                          setPaymentType(e.currentTarget.value as PaymentType)
+                        }
                         className="form-radio text-[#6B6B6B] h-4 w-4"
                       />
                       <div>
@@ -1234,7 +1242,9 @@ export default function CartPage() {
                           name="payment-type"
                           value="cod"
                           checked={paymentType === "cod"}
-                          onChange={(e) => setPaymentType(e.currentTarget.value as PaymentType)}
+                          onChange={(e) =>
+                            setPaymentType(e.currentTarget.value as PaymentType)
+                          }
                           className="form-radio text-[#6B6B6B] h-4 w-4"
                         />
                         <div>
@@ -1332,7 +1342,7 @@ export default function CartPage() {
               )}
               <div className="mt-4 text-sm text-gray-600">
                 <p>
-                  💡 Coba kode: <strong>YAMEIYA10</strong> untuk diskon 10%
+                  💡 Coba kode: <strong>BLACKBOXINC10</strong> untuk diskon 10%
                 </p>
               </div>
             </div>
