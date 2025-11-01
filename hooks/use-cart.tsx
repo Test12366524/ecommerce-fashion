@@ -13,7 +13,7 @@ type CartStore = {
   open: () => void;
   close: () => void;
   toggle: () => void;
-  addItem: (product: Product) => void;
+  addItem: (product: Product, product_variant_id: number) => void;
   removeItem: (id: number) => void;
   increaseItemQuantity: (id: number) => void; // Fungsi baru untuk menambah kuantitas
   decreaseItemQuantity: (id: number) => void; // Fungsi baru untuk mengurangi kuantitas
@@ -34,7 +34,7 @@ const useCart = create<CartStore>()(
       
       toggle: () => set((state) => ({ isOpen: !state.isOpen })),
       
-      addItem: (product) => {
+      addItem: (product: Product, product_variant_id: number) => {
         set((state) => {
           const existingItem = state.cartItems.find(
             (item) => item.id === product.id
@@ -51,7 +51,7 @@ const useCart = create<CartStore>()(
           } else {
             // Jika produk belum ada, tambahkan produk baru dengan kuantitas 1
             return {
-              cartItems: [...state.cartItems, { ...product, quantity: 1 }],
+              cartItems: [...state.cartItems, { ...product, quantity: 1, product_variant_id: product_variant_id }], // Pastikan untuk menyertakan product_variant_id
             };
           }
         });

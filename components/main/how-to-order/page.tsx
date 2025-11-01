@@ -1,3 +1,4 @@
+// components/pages/HowToOrderPage.tsx
 "use client";
 
 import { useState } from "react";
@@ -22,12 +23,14 @@ import {
   ChevronUp,
   AlertCircle,
   ArrowLeft,
+  Ruler, // Ikon baru untuk fashion/size
 } from "lucide-react";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"; // Asumsi Tooltip sudah B&W
+import clsx from "clsx";
 
 interface Step {
   id: number;
@@ -53,160 +56,160 @@ export default function HowToOrderPage() {
   const [activeStep, setActiveStep] = useState(1);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
 
-  // === THEME (urut ke-2: #F6CCD0), selang-seling dgn putih ===
+  // === THEME: Black and White ===
   const THEME = {
-    primary: "#6B6B6B", // warna halaman ini
-    bubbleA: "#DFF19D",
-    bubbleB: "#BFF0F5",
+    primary: "#000000",
+    secondary: "#FFFFFF",
+    accentGray: "#1F2937", // Abu-abu gelap untuk aksen
   };
 
   const orderSteps: Step[] = [
     {
       id: 1,
-      title: "Pilih Produk / Layanan",
+      title: "Pilih Gaya & Ukuran",
       description:
-        "Jelajahi koleksi Shop dan layanan perawatan kulit, lalu pilih yang sesuai kebutuhan Anda.",
+        "Jelajahi koleksi eksklusif kami dan tentukan item yang sesuai dengan selera dan ukuran Anda.",
       details: [
-        "Browse kategori Shop (Facial Wash, Serum, Moisturizer, Sunscreen, dll.)",
-        "Gunakan filter jenis kulit untuk rekomendasi yang lebih tepat",
-        "Baca detail produk, manfaat, dan review dari pelanggan lain",
-        "Untuk layanan, pilih jadwal reservasi yang tersedia",
+        "Browse kategori (T-Shirt, Denim, Aksesori, dll.)",
+        "Gunakan fitur 'Size Guide' untuk memastikan fitting yang sempurna",
+        "Lihat detail material dan instruksi perawatan",
+        "Pilih warna dan varian yang Anda inginkan",
       ],
-      icon: <ShoppingCart className="w-8 h-8" />,
-      image: "/images/new/order-steps/step-1.png",
+      icon: <Ruler className="w-8 h-8" />,
+      image: "images/new/order-steps/step-1.png", // Gambar Fashion
       tips: [
-        "Gunakan filter jenis kulit (berminyak, kering, sensitif, kombinasi)",
-        "Cek label dermatologically tested atau hypoallergenic",
-        "Untuk layanan, pastikan pilih cabang & jadwal sesuai waktu luang Anda",
+        "Selalu cek Size Guide untuk menghindari retur",
+        "Perhatikan detail cutting (Slim, Oversized, Regular)",
+        "Lihat ulasan untuk real-life fitting feedback",
       ],
     },
     {
       id: 2,
-      title: "Review Keranjang",
+      title: "Review Keranjang Belanja",
       description:
-        "Periksa kembali produk Shop dan layanan yang dipilih sebelum checkout.",
+        "Verifikasi item dan pastikan semua detail (ukuran, warna, kuantitas) sudah benar sebelum checkout.",
       details: [
-        "Klik ikon keranjang untuk melihat daftar produk & layanan",
-        "Ubah quantity atau hapus item jika diperlukan",
-        "Cek total harga termasuk ongkos kirim atau biaya reservasi",
-        "Klik 'Checkout' untuk melanjutkan",
+        "Cek ulang kuantitas dan harga total",
+        "Pastikan ukuran dan warna sudah sesuai pilihan",
+        "Masukkan kode diskon atau voucher jika ada",
+        "Klik 'Proceed to Checkout' untuk lanjut",
       ],
       icon: <Package className="w-8 h-8" />,
-      image: "/images/new/order-steps/step-2.png",
+      image: "images/new/order-steps/step-2.png", // Gambar Fashion
       tips: [
-        "Gunakan kode promo atau voucher yang tersedia",
-        "Periksa kembali jadwal reservasi sebelum melanjutkan",
-        "Manfaatkan free shipping untuk pembelian tertentu",
+        "Manfaatkan free shipping untuk pembelian di atas Rp 500.000",
+        "Periksa kembali detail ukuran sebelum submit",
+        "Keranjang akan tersimpan otomatis jika Anda sudah login",
       ],
     },
     {
       id: 3,
-      title: "Isi Data Pengiriman / Reservasi",
+      title: "Isi Detail Pengiriman",
       description:
-        "Lengkapi informasi pengiriman produk atau detail reservasi layanan.",
+        "Lengkapi data Anda, termasuk nama, kontak, dan alamat pengiriman yang akurat.",
       details: [
-        "Isi nama lengkap dan nomor WhatsApp aktif",
-        "Masukkan alamat lengkap untuk pengiriman produk",
-        "Untuk reservasi, pilih tanggal & jam yang tersedia",
-        "Tambahkan catatan khusus jika diperlukan",
+        "Isi nama lengkap dan nomor telepon aktif",
+        "Masukkan alamat pengiriman selengkap mungkin (patokan, nomor rumah)",
+        "Pilih metode dan estimasi biaya pengiriman",
+        "Tambahkan catatan khusus untuk kurir jika diperlukan",
       ],
       icon: <User className="w-8 h-8" />,
-      image: "/images/new/order-steps/step-3.png",
+      image: "images/new/order-steps/step-3.png", // Gambar Fashion
       tips: [
-        "Pastikan nomor WhatsApp aktif untuk konfirmasi cepat",
-        "Alamat pengiriman harus jelas dan lengkap",
-        "Cek kembali tanggal & jam reservasi sebelum submit",
+        "Pastikan nomor telepon aktif untuk konfirmasi kurir",
+        "Cek kembali kode pos dan alamat Anda",
+        "Alamat yang tidak lengkap bisa menunda pengiriman",
       ],
     },
     {
       id: 4,
       title: "Pilih Metode Pembayaran",
       description:
-        "Nikmati proses pembayaran aman melalui Midtrans dengan berbagai metode.",
+        "Selesaikan transaksi Anda dengan aman melalui berbagai opsi pembayaran terpercaya (Midtrans).",
       details: [
-        "Pilih metode: Transfer Bank, E-Wallet, Virtual Account, atau Kartu Kredit",
-        "Ikuti instruksi sesuai metode yang dipilih",
-        "Sistem otomatis memverifikasi pembayaran",
-        "Konfirmasi pembayaran dikirim via WhatsApp/Email",
+        "Pilih metode: Transfer Bank, E-Wallet, atau Kartu Kredit/VA",
+        "Ikuti instruksi pembayaran yang muncul di layar",
+        "Verifikasi pembayaran otomatis dan notifikasi dikirim via email/WhatsApp",
+        "Semua transaksi dienkripsi untuk keamanan data Anda",
       ],
       icon: <CreditCard className="w-8 h-8" />,
-      image: "/images/new/order-steps/step-4.png",
+      image: "images/new/order-steps/step-4.png", // Gambar Fashion
       tips: [
-        "Gunakan E-Wallet untuk cashback & promo menarik",
-        "Simpan bukti pembayaran untuk berjaga-jaga",
-        "Konfirmasi biasanya hanya memakan waktu beberapa menit",
+        "Gunakan E-Wallet untuk proses tercepat",
+        "Simpan kode pembayaran/Virtual Account Anda",
+        "Pembayaran harus dilakukan dalam batas waktu yang ditentukan (maks 2 jam)",
       ],
     },
     {
       id: 5,
-      title: "Pesanan Diproses",
+      title: "Konfirmasi & Proses Kirim",
       description:
-        "Pesanan produk segera dikirim, dan layanan reservasi akan dikonfirmasi.",
+        "Pesanan Anda dikonfirmasi, dan kami segera memulai proses pengepakan dan pengiriman.",
       details: [
-        "Produk Shop akan diproses dalam 1-2 hari kerja",
-        "Untuk reservasi, Anda akan menerima notifikasi konfirmasi",
-        "Update status akan dikirim via WhatsApp/Email",
-        "Estimasi pengiriman produk 2-5 hari kerja",
+        "Pesanan diproses dalam 1x24 jam (hari kerja)",
+        "Anda akan menerima nomor resi pengiriman setelah produk dikirim",
+        "Kami menggunakan packaging premium untuk menjaga kualitas produk",
+        "Update status dikirim via email dan notifikasi WhatsApp",
       ],
       icon: <CheckCircle className="w-8 h-8" />,
-      image: "/images/new/order-steps/step-5.png",
+      image: "images/new/order-steps/step-5.png", // Gambar Fashion
       tips: [
-        "Simpan nomor pesanan untuk tracking",
-        "Cek update status di WhatsApp/Email",
-        "Hubungi customer service jika ada kendala",
+        "Cek email/WhatsApp secara berkala untuk resi",
+        "Pesanan masuk setelah jam 1 siang akan diproses hari kerja berikutnya",
+        "Hubungi CS jika resi belum terbit setelah 2 hari kerja",
       ],
     },
     {
       id: 6,
-      title: "Cek Status Pesanan",
+      title: "Terima & Beri Ulasan",
       description:
-        "Pantau status pesanan produk atau konfirmasi reservasi layanan.",
+        "Paket Blackboxinc tiba! Nikmati produk Anda dan bantu kami dengan memberikan ulasan.",
       details: [
-        "Login ke akun Anda di website Shop",
-        "Buka menu 'Pesanan Saya' untuk produk",
-        "Lihat status reservasi layanan di menu 'Reservasi'",
-        "Download invoice atau berikan review pengalaman",
+        "Periksa kondisi paket saat diterima",
+        "Jika ada masalah, hubungi CS segera (sertakan video unboxing)",
+        "Login dan berikan review produk untuk mendapatkan loyalty points",
+        "Tingkatkan gaya Anda dengan item Blackboxinc yang baru!",
       ],
       icon: <Truck className="w-8 h-8" />,
-      image: "/images/new/order-steps/step-6.png",
+      image: "images/new/order-steps/step-6.png", // Gambar Fashion
       tips: [
-        "Gunakan nomor resi untuk tracking pengiriman",
-        "Review produk atau layanan untuk dapatkan reward poin",
-        "Status akan update otomatis saat ada perubahan",
+        "Review yang jujur sangat berharga bagi kami",
+        "Simpan nota/invoice untuk klaim garansi retur/tukar ukuran",
+        "Abadikan gaya Anda dan tag kami di Instagram!",
       ],
     },
   ];
 
   const faqs: FAQ[] = [
     {
-      question: "Berapa lama proses pengiriman?",
+      question: "Berapa lama estimasi pengiriman standar?",
       answer:
-        "Estimasi pengiriman 3-7 hari kerja untuk wilayah Jabodetabek, dan 7-14 hari kerja untuk luar kota. Kami menggunakan ekspedisi terpercaya seperti JNE, TIKI, dan J&T.",
+        "Estimasi pengiriman standar adalah 2-5 hari kerja untuk wilayah Jabodetabek dan 5-10 hari kerja untuk luar pulau Jawa. Kami akan mengirimkan nomor resi segera setelah pesanan dikirim.",
     },
     {
-      question: "Apakah ada minimum pembelian?",
+      question: "Apakah saya bisa menukar ukuran jika tidak pas?",
       answer:
-        "Tidak ada minimum pembelian. Namun untuk pembelian di atas Rp 250.000, Anda mendapat free shipping ke seluruh Indonesia.",
+        "Ya, kami menyediakan layanan penukaran ukuran (size exchange) dalam 7 hari setelah barang diterima, selama stok ukuran yang diinginkan masih tersedia dan produk dalam kondisi belum dipakai (label masih ada).",
     },
     {
-      question: "Metode pembayaran apa saja yang tersedia?",
+      question: "Apa saja metode pembayaran yang tersedia?",
       answer:
-        "Kami menerima transfer bank (BCA, Mandiri, BRI, BNI), e-wallet (GoPay, OVO, DANA, ShopeePay), dan virtual account. Semua pembayaran diproses melalui Midtrans yang aman.",
+        "Kami menerima Transfer Bank (BCA, Mandiri, dll.), E-Wallet (GoPay, OVO, Dana), Virtual Account, dan Kartu Kredit. Semua diproses melalui gateway Midtrans yang terenkripsi aman.",
     },
     {
-      question: "Bisakah mengubah atau membatalkan pesanan?",
+      question: "Bisakah mengubah alamat atau membatalkan pesanan?",
       answer:
-        "Pesanan dapat diubah atau dibatalkan dalam 1 jam setelah pembayaran dikonfirmasi. Setelah itu, pesanan akan masuk proses packing dan tidak dapat diubah.",
+        "Perubahan alamat atau pembatalan hanya dapat dilakukan dalam waktu 1 jam setelah pembayaran terkonfirmasi. Setelah itu, pesanan akan masuk tahap pengepakan dan tidak dapat diubah.",
     },
     {
-      question: "Bagaimana jika produk rusak atau salah?",
+      question: "Bagaimana jika produk yang diterima cacat?",
       answer:
-        "Kami menyediakan garansi 30 hari untuk produk rusak atau salah kirim. Hubungi customer service kami dengan foto produk untuk proses penggantian.",
+        "Kami menjamin kualitas produk. Jika produk cacat atau salah kirim, hubungi Customer Service kami dalam 48 jam setelah paket diterima (sertakan video unboxing) untuk proses penggantian tanpa biaya tambahan.",
     },
     {
-      question: "Apakah ada program loyalitas?",
+      question: "Apakah ada biaya untuk penukaran ukuran?",
       answer:
-        "Ya! Setiap pembelian akan mendapat poin COLORE yang bisa ditukar dengan diskon atau produk gratis. Bergabunglah dengan COLORE Club untuk benefit eksklusif.",
+        "Penukaran ukuran tidak dikenakan biaya produk, namun biaya pengiriman kembali ke gudang dan pengiriman ulang kepada Anda ditanggung oleh pembeli, kecuali jika terjadi kesalahan dari pihak kami.",
     },
   ];
 
@@ -214,70 +217,57 @@ export default function HowToOrderPage() {
     {
       name: "Transfer Bank",
       icon: "🏦",
-      description: "BCA, Mandiri, BRI, BNI",
+      description: "BCA, Mandiri, BNI, BRI",
     },
     {
       name: "E-Wallet",
       icon: "📱",
       description: "GoPay, OVO, DANA, ShopeePay",
     },
-    { name: "Virtual Account", icon: "💳", description: "VA Bank & Retail" },
+    { name: "Virtual Account", icon: "💳", description: "All Major Banks" },
     { name: "Credit Card", icon: "💳", description: "Visa, Mastercard, JCB" },
   ];
 
   const benefits = [
     {
       icon: <Shield className="w-6 h-6" style={{ color: THEME.primary }} />,
-      title: "Pembayaran Aman",
-      description: "Dilindungi enkripsi SSL dan gateway Midtrans",
+      title: "Secure Payment",
+      description: "Protected by SSL encryption and Midtrans.",
     },
     {
       icon: <Truck className="w-6 h-6" style={{ color: THEME.primary }} />,
-      title: "Pengiriman Cepat",
-      description: "3-7 hari kerja dengan tracking real-time",
+      title: "Fast Shipping",
+      description: "2-5 working days with real-time tracking.",
     },
     {
       icon: (
         <HeadphonesIcon className="w-6 h-6" style={{ color: THEME.primary }} />
       ),
-      title: "Customer Support",
-      description: "Tim support siap membantu 24/7",
+      title: "Expert Support",
+      description: "Dedicated team ready to assist 24/7.",
     },
   ];
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: `linear-gradient(180deg, #FFFFFF 0%, ${THEME.primary}1A 100%)`,
-      }}
-    >
-      {/* ============== HERO (Shop theme) ============== */}
-      <section className="relative pt-24 pb-12 px-6 lg:px-12 overflow-hidden bg-white">
-        {/* bubbles blend */}
+    <div className="min-h-screen bg-white">
+      {/* ============== HERO (B&W Theme) ============== */}
+      <section className="relative pt-24 pb-16 px-6 lg:px-12 overflow-hidden bg-white border-b border-gray-100">
+        {/* Background Accent (Subtle Gray/Black Blur) */}
         <div className="pointer-events-none absolute inset-0">
           <div
             className="absolute -top-24 -left-24 w-[40rem] h-[40rem] rounded-full"
             style={{
-              background: "#6B6B6B",
+              background: THEME.primary,
               filter: "blur(80px)",
-              opacity: 0.15,
+              opacity: 0.05,
             }}
           />
           <div
-            className="absolute -top-10 right-[-10%] w-[28rem] h-[28rem] rounded-full"
+            className="absolute top-1/3 right-[-10%] w-[28rem] h-[28rem] rounded-full"
             style={{
-              background: "#E53935",
+              background: THEME.accentGray,
               filter: "blur(100px)",
-              opacity: 0.12,
-            }}
-          />
-          <div
-            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[36rem] h-[36rem] rounded-full"
-            style={{
-              background: "#6B6B6B",
-              filter: "blur(80px)",
-              opacity: 0.1,
+              opacity: 0.08,
             }}
           />
         </div>
@@ -286,117 +276,111 @@ export default function HowToOrderPage() {
           {/* Badge */}
           <div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
-            style={{ backgroundColor: "#E53935", color: "#FFFFFF" }}
+            style={{ backgroundColor: THEME.primary, color: "#FFFFFF" }}
           >
             <Sparkles className="w-4 h-4 text-white" />
-            <span className="text-sm font-medium">Panduan Pemesanan</span>
+            <span className="text-sm font-medium uppercase tracking-wider">
+              Ordering Guide
+            </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl lg:text-6xl font-bold text-[#000000] mb-6">
-            Cara Pesan di
-            <span className="block text-[#6B6B6B]">BLACKBOXINC Shop</span>
+          <h1 className="text-5xl lg:text-7xl font-extrabold text-black mb-6 uppercase tracking-tight">
+            How To Order From
+            <span className="block text-gray-700">Blackboxinc</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl text-[#6B6B6B] max-w-3xl mx-auto mb-8">
-            Ikuti 6 langkah mudah untuk mendapatkan produk perawatan kulit
-            terbaik untuk Anda. Proses yang simple, aman, dan menyenangkan!
+          <p className="text-lg text-gray-700 max-w-4xl mx-auto mb-10 font-medium">
+            Follow our **6 simple steps** to successfully purchase your exclusive
+            fashion items. Secure, straightforward, and fast!
           </p>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {benefits.map((benefit, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl p-4 shadow-sm border border-[#6B6B6B]/20"
+                // B&W Stat Card Styling
+                className="bg-gray-50 rounded-lg p-5 shadow-sm border border-gray-200"
               >
-                <div className="flex justify-center mb-3 text-[#E53935]">
+                <div className="flex justify-center mb-3 text-black">
                   {benefit.icon}
                 </div>
-                <h3 className="font-semibold text-[#000000] text-sm mb-1">
+                <h3 className="font-bold text-black text-base mb-1 uppercase tracking-wide">
                   {benefit.title}
                 </h3>
-                <p className="text-xs text-[#6B6B6B]">{benefit.description}</p>
+                <p className="text-xs text-gray-600">{benefit.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============== STEP NAV + CONTENT (Shop theme) ============== */}
-      <section className="px-6 lg:px-12 mb-16 bg-white pt-10">
+      {/* ============== STEP NAV + CONTENT (B&W Theme) ============== */}
+      <section className="px-6 lg:px-12 mb-16 pt-16">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#000000] mb-4">
-              Langkah-langkah <span className="text-[#E53935]">Pemesanan</span>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-extrabold text-black mb-4 uppercase">
+              The 6 Steps Process
             </h2>
-            <p className="text-[#6B6B6B] max-w-2xl mx-auto">
-              Proses pemesanan yang simple dan user-friendly, dirancang untuk
-              kemudahan Anda
+            <p className="text-gray-700 max-w-3xl mx-auto text-lg">
+              A straightforward and secure journey from selection to delivery.
             </p>
           </div>
 
           {/* Step Navigation */}
           <div className="flex justify-center mb-12">
-            {/* Step Navigation */}
-            <div className="flex justify-center mb-12">
-              <div
-                className="bg-white rounded-3xl p-6 shadow-lg w-full"
-                style={{ border: `1px solid #6B6B6B33` }}
-              >
-                <div className="flex flex-wrap gap-3">
-                  {orderSteps.map((step, index) => (
-                    <div key={step.id} className="flex items-center">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => setActiveStep(step.id)}
-                            className="flex items-center gap-3 w-full sm:w-auto px-4 py-3 rounded-2xl font-medium transition-all duration-300 text-sm sm:text-base"
-                            style={
-                              activeStep === step.id
-                                ? {
-                                    backgroundColor: "#E53935",
-                                    color: "#fff",
-                                    boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
-                                  }
-                                : {
-                                    backgroundColor: "#F3F4F6",
-                                    color: "#6B6B6B",
-                                  }
-                            }
+            <div
+              className="bg-white rounded-lg p-3 md:p-6 shadow-xl w-full border border-gray-200"
+              style={{ border: `1px solid ${THEME.accentGray}33` }}
+            >
+              <div className="flex flex-wrap justify-center gap-3">
+                {orderSteps.map((step, index) => (
+                  <div key={step.id} className="flex items-center">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => setActiveStep(step.id)}
+                          // Step Button B&W Styling
+                          className={clsx(
+                            "flex items-center gap-3 w-full sm:w-auto px-4 py-3 rounded-lg font-bold transition-all duration-300 text-sm uppercase tracking-wider",
+                            activeStep === step.id
+                              ? "bg-black text-white shadow-lg"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          )}
+                        >
+                          <div
+                            className="p-2 rounded-lg flex items-center justify-center"
+                            style={{
+                              backgroundColor:
+                                activeStep === step.id ? "#FFFFFF33" : "#fff",
+                            }}
                           >
                             <div
-                              className="p-2 rounded-xl flex items-center justify-center"
                               style={{
-                                backgroundColor:
-                                  activeStep === step.id ? "#FFFFFF33" : "#fff",
+                                color:
+                                  activeStep === step.id ? "#fff" : "#000000",
                               }}
                             >
-                              <div
-                                style={{
-                                  color:
-                                    activeStep === step.id ? "#fff" : "#E53935",
-                                }}
-                              >
-                                {step.icon}
-                              </div>
+                              {step.icon}
                             </div>
-                            <span className="sm:hidden">{step.id}</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {index + 1}. {step.title}
-                        </TooltipContent>
-                      </Tooltip>
+                          </div>
+                          <span className="hidden sm:inline">
+                            {step.id}. {step.title.split(" ")[0]}
+                          </span>
+                          <span className="sm:hidden">{step.id}</span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>{step.title}</TooltipContent>
+                    </Tooltip>
 
-                      {/* Arrow only on large screens */}
-                      {index < orderSteps.length - 1 && (
-                        <ArrowRight className="w-5 h-5 text-[#6B6B6B]/30 mx-2" />
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    {/* Arrow */}
+                    {index < orderSteps.length - 1 && (
+                      <ArrowRight className="hidden md:block w-5 h-5 text-gray-400 mx-2" />
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -412,58 +396,61 @@ export default function HowToOrderPage() {
               }`}
             >
               {activeStep === step.id && (
-                <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
                   <div className="grid grid-cols-1 lg:grid-cols-2">
                     {/* Content */}
                     <div className="p-8 lg:p-12">
                       <div className="flex items-center gap-4 mb-6">
                         <div
-                          className="w-16 h-16 rounded-2xl flex items-center justify-center text-white"
-                          style={{ backgroundColor: "#E53935" }}
+                          className="w-16 h-16 rounded-lg flex items-center justify-center text-white"
+                          style={{ backgroundColor: THEME.primary }}
                         >
                           {step.icon}
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-[#E53935]">
-                            Langkah {step.id}
+                          <div className="font-bold text-sm text-gray-700 uppercase tracking-wider">
+                            Step {step.id}
                           </div>
-                          <h3 className="text-2xl font-bold text-[#000000]">
+                          <h3 className="text-3xl font-extrabold text-black uppercase">
                             {step.title}
                           </h3>
                         </div>
                       </div>
 
-                      <p className="text-[#6B6B6B] text-lg mb-6">
+                      <p className="text-gray-700 text-lg mb-6 leading-relaxed">
                         {step.description}
                       </p>
 
                       <div className="space-y-4 mb-8">
-                        <h4 className="font-semibold text-[#000000]">
-                          Detail Langkah:
+                        <h4 className="font-bold text-black uppercase tracking-wider">
+                          Key Details:
                         </h4>
                         {step.details.map((detail, index) => (
                           <div key={index} className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-[#E53935]/10">
-                              <div className="w-2 h-2 rounded-full bg-[#E53935]" />
+                            {/* Bullet Point B&W */}
+                            <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-black/10">
+                              <div className="w-1.5 h-1.5 rounded-full bg-black" />
                             </div>
-                            <span className="text-[#6B6B6B]">{detail}</span>
+                            <span className="text-gray-700 font-medium text-sm">
+                              {detail}
+                            </span>
                           </div>
                         ))}
                       </div>
 
                       {step.tips && (
-                        <div className="rounded-2xl p-6 bg-[#6B6B6B]/5">
-                          <h4 className="font-semibold text-[#000000] mb-3 flex items-center gap-2">
-                            <AlertCircle className="w-5 h-5 text-[#E53935]" />
-                            Tips Berguna:
+                        <div className="rounded-lg p-6 bg-gray-50 border border-gray-200">
+                          <h4 className="font-bold text-black mb-3 flex items-center gap-2 uppercase tracking-wider">
+                            <AlertCircle className="w-5 h-5 text-black" />
+                            Expert Tips:
                           </h4>
                           <ul className="space-y-2">
                             {step.tips.map((tip, index) => (
                               <li
                                 key={index}
-                                className="text-sm flex items-start gap-2 text-[#6B6B6B]"
+                                className="text-sm flex items-start gap-2 text-gray-700"
                               >
-                                <Star className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#E53935]" />
+                                <Star className="w-4 h-4 flex-shrink-0 mt-0.5 text-black" />
                                 {tip}
                               </li>
                             ))}
@@ -473,17 +460,16 @@ export default function HowToOrderPage() {
                     </div>
 
                     {/* Visual */}
-                    <div className="relative flex items-center justify-center p-8 bg-gradient-to-br from-[#FFFFFF] via-[#F9F9F9] to-[#FFEAEA]">
+                    <div className="relative flex items-center justify-center p-8 bg-gray-100/70">
                       <div className="relative w-full max-w-md">
                         <Image
                           src={step.image}
                           alt={step.title}
                           width={400}
                           height={300}
-                          className="w-full h-auto rounded-2xl shadow-lg"
+                          className="w-full h-auto rounded-lg shadow-2xl grayscale" // Grayscale image
+                          priority={true}
                         />
-                        <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full opacity-50 bg-[#E53935]/30" />
-                        <div className="absolute -bottom-4 -left-4 w-6 h-6 rounded-full opacity-50 bg-[#6B6B6B]/30" />
                       </div>
                     </div>
                   </div>
@@ -492,183 +478,184 @@ export default function HowToOrderPage() {
             </div>
           ))}
 
-          {/* Navigation Buttons */}
+          {/* Navigation Buttons (B&W Theme) */}
           <div className="flex justify-between mt-8">
             <button
               onClick={() => setActiveStep(Math.max(1, activeStep - 1))}
               disabled={activeStep === 1}
-              className="flex items-center gap-2 px-6 py-3 rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-[#6B6B6B] text-[#6B6B6B] hover:bg-[#6B6B6B] hover:text-white"
+              // Button Secondary B&W
+              className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed border border-black text-black hover:bg-black hover:text-white font-semibold uppercase tracking-wider"
             >
               <ArrowLeft className="w-5 h-5" />
-              Langkah Sebelumnya
+              Previous Step
             </button>
 
             <button
               onClick={() => setActiveStep(Math.min(6, activeStep + 1))}
               disabled={activeStep === 6}
-              className="flex items-center gap-2 px-6 py-3 text-white rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[#E53935] hover:bg-[#c62828]"
+              // Button Primary B&W
+              className="flex items-center gap-2 px-6 py-3 text-white rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-black hover:bg-gray-800 font-bold uppercase tracking-wider"
             >
-              Langkah Selanjutnya
+              Next Step
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
         </div>
       </section>
 
-      {/* ============== PAYMENT (section putih) ============== */}
+      {/* ============== PAYMENT METHODS (B&W Theme) ============== */}
       <section className="px-6 lg:px-12 mb-16">
         <div className="container mx-auto">
-          <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-lg">
+          <div className="bg-white rounded-xl p-8 lg:p-12 shadow-lg border border-gray-200">
             {/* Title */}
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Metode <span style={{ color: THEME.primary }}>Pembayaran</span>
+              <h2 className="text-4xl font-extrabold text-black mb-4 uppercase">
+                Secure Payment Methods
               </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Kami menyediakan berbagai metode pembayaran yang aman dan
-                terpercaya melalui gateway Midtrans
+              <p className="text-gray-700 max-w-2xl mx-auto text-lg">
+                Your transaction safety is our priority. Powered by Midtrans.
               </p>
             </div>
 
-            {/* Payment Methods */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Payment Methods Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 mb-10">
               {paymentMethods.map((method, index) => (
                 <div
                   key={index}
-                  className="text-center p-6 rounded-2xl transition-all duration-300 border hover:shadow-md"
-                  style={{ borderColor: "#E5E7EB" }}
+                  className="text-center p-6 rounded-lg transition-all duration-300 border border-gray-300 bg-gray-50 hover:shadow-md"
                 >
-                  <div
-                    className="text-4xl mb-4"
-                    style={{ color: THEME.primary }}
-                  >
+                  <div className="text-4xl mb-4 text-black">
                     {method.icon}
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
+                  <h3 className="font-bold text-black mb-1 uppercase tracking-wide">
                     {method.name}
                   </h3>
-                  <p className="text-sm text-gray-600">{method.description}</p>
+                  <p className="text-xs text-gray-600">{method.description}</p>
                 </div>
               ))}
             </div>
 
             {/* Security Info */}
             <div
-              className="rounded-2xl p-6 text-center"
-              style={{ backgroundColor: `${THEME.primary}0D` }} // merah lembut transparan
+              className="rounded-lg p-6 text-center border border-black/20"
+              style={{ backgroundColor: `${THEME.primary}0D` }} 
             >
               <div className="flex justify-center mb-4">
-                <Shield className="w-8 h-8" style={{ color: THEME.primary }} />
+                <Shield className="w-8 h-8 text-black" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Keamanan Terjamin
+              <h3 className="font-bold text-black mb-2 uppercase tracking-wider">
+                100% Security Guarantee
               </h3>
-              <p className="text-gray-600">
-                Semua transaksi dilindungi enkripsi SSL 256-bit dan diproses
-                melalui Midtrans yang telah tersertifikasi PCI DSS Level 1
+              <p className="text-gray-700 text-sm">
+                All transactions are secured with 256-bit SSL encryption and
+                processed via PCI DSS Level 1 certified gateway.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============== CONTACT (section berwarna) ============== */}
+      {/* ============== CONTACT (B&W Theme) ============== */}
       <section className="px-6 lg:px-12 mb-16">
         <div className="container mx-auto">
           <div
-            className="rounded-3xl p-8 lg:p-12 text-gray-900"
+            // Contact Card B&W Inverted
+            className="rounded-xl p-8 lg:p-12 text-white shadow-2xl"
             style={{
-              background: `linear-gradient(90deg, ${THEME.primary} 0%, ${THEME.primary}CC 100%)`,
-              color: "#fff",
+              background: THEME.primary,
+              color: THEME.secondary,
             }}
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4">Butuh Bantuan?</h2>
-              <p className="text-white/90 max-w-2xl mx-auto">
-                Tim Customer Services akan siap membantu fast response hari
-                Senin - Jumat jam 08.00 - 17.00 WIB. Jangan ragu untuk
-                menghubungi kami!
+              <h2 className="text-3xl font-extrabold mb-4 uppercase">
+                Need Assistance?
+              </h2>
+              <p className="text-white/80 max-w-2xl mx-auto text-lg">
+                Our dedicated support team is available during business hours to
+                assist you with any questions.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  {/* phone icon replaced with Mail & MessageCircle above; keeping consistent */}
+                <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">WhatsApp</h3>
-                <p className="text-white/90">+62 817 694 2128</p>
-                <p className="text-sm text-white/70">
-                  Respon cepat dalam 5 menit
-                </p>
+                <h3 className="font-bold mb-1 uppercase tracking-wider">
+                  Live Chat / WA
+                </h3>
+                <p className="text-white/90 font-semibold">+62 817 694 2128</p>
+                <p className="text-sm text-white/70">Fast response (5 mins)</p>
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Mail className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-white/90">support@BLACKBOXINC.id</p>
-                <p className="text-sm text-white/70">Respon dalam 2 jam</p>
+                <h3 className="font-bold mb-1 uppercase tracking-wider">
+                  Email Support
+                </h3>
+                <p className="text-white/90 font-semibold">support@blackboxinc.id</p>
+                <p className="text-sm text-white/70">Response within 2 hours</p>
               </div>
 
               <div className="text-center">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <HeadphonesIcon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="font-semibold mb-2">Customer Support</h3>
-                <p className="text-white/90">24/7 Online</p>
-                <p className="text-sm text-white/70">Live chat tersedia</p>
+                <h3 className="font-bold mb-1 uppercase tracking-wider">
+                  Operational Hours
+                </h3>
+                <p className="text-white/90 font-semibold">Mon - Fri, 8AM - 5PM WIB</p>
+                <p className="text-sm text-white/70">GMT+7</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============== CTA (section putih) ============== */}
+      {/* ============== CTA (B&W Theme) ============== */}
       <section className="px-6 lg:px-12 mb-16">
         <div className="container mx-auto">
-          <div className="bg-white rounded-3xl p-8 lg:p-12 text-center shadow-lg">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Yuk Mulai Belanja Sekarang
+          <div className="bg-gray-50 rounded-xl p-8 lg:p-12 text-center shadow-lg border border-gray-200">
+            <h2 className="text-3xl lg:text-4xl font-extrabold text-black mb-4 uppercase">
+              Ready To Define Your Style?
             </h2>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Jelajahi koleksi produk ramah lingkungan kami dan berikan yang
-              terbaik untuk perkembangan kreativitas anak Anda.
+            <p className="text-gray-700 mb-8 max-w-2xl mx-auto text-lg">
+              Explore our exclusive collection and start your journey towards
+              timeless fashion.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={goToProductPage}
-                className="text-white px-8 py-4 rounded-2xl font-semibold transition-colors flex items-center justify-center gap-2"
-                style={{ backgroundColor: THEME.primary }}
+                // Button Primary B&W
+                className="text-white px-8 py-4 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 bg-black hover:bg-gray-800 uppercase tracking-wider shadow-xl"
               >
                 <ShoppingCart className="w-5 h-5" />
-                Mulai Berbelanja
+                Shop Now
               </button>
               <button
-                className="px-8 py-4 rounded-2xl font-semibold transition-colors flex items-center justify-center gap-2 border"
-                style={{ color: THEME.primary, borderColor: THEME.primary }}
+                // Button Secondary B&W
+                className="px-8 py-4 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 border border-black text-black hover:bg-black hover:text-white uppercase tracking-wider"
               >
                 <Play className="w-5 h-5" />
-                Lihat Video Tutorial
+                Watch Brand Video
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============== FAQ (section putih) ============== */}
-      <section className="px-6 lg:px-12 pb-16">
+      {/* ============== FAQ (B&W Theme) ============== */}
+      <section className="px-6 lg:px-12 pb-16 pt-8">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Pertanyaan <span style={{ color: THEME.primary }}>Umum</span>
+            <h2 className="text-4xl font-extrabold text-black mb-4 uppercase">
+              Frequently Asked Questions
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Temukan jawaban untuk pertanyaan yang sering ditanyakan tentang
-              proses pemesanan
+            <p className="text-gray-700 max-w-3xl mx-auto text-lg">
+              Find quick answers about our shipping, returns, and exchanges.
             </p>
           </div>
 
@@ -677,32 +664,29 @@ export default function HowToOrderPage() {
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                  // FAQ Card B&W
+                  className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200"
                 >
                   <button
                     onClick={() =>
                       setExpandedFAQ(expandedFAQ === index ? null : index)
                     }
-                    className="w-full px-6 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
                   >
-                    <h3 className="font-semibold text-gray-900 pr-4">
+                    <h3 className="font-bold text-black pr-4 uppercase tracking-wider text-sm md:text-base">
                       {faq.question}
                     </h3>
-                    {expandedFAQ === index ? (
-                      <ChevronUp
-                        className="w-5 h-5"
-                        style={{ color: THEME.primary }}
-                      />
-                    ) : (
-                      <ChevronDown
-                        className="w-5 h-5"
-                        style={{ color: THEME.primary }}
-                      />
-                    )}
+                    <div className="flex-shrink-0 text-black">
+                      {expandedFAQ === index ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
+                    </div>
                   </button>
                   {expandedFAQ === index && (
-                    <div className="px-6 pb-6">
-                      <p className="text-gray-600 leading-relaxed">
+                    <div className="px-6 pb-4 border-t border-gray-100">
+                      <p className="text-gray-700 leading-relaxed text-sm">
                         {faq.answer}
                       </p>
                     </div>

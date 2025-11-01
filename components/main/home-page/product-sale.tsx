@@ -1,3 +1,4 @@
+// components/sections/ProductSale.tsx
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -13,11 +14,12 @@ import {
   Minus,
   Share2,
 } from "lucide-react";
-import ColorSizeFilter from "./color-size-filter";
+import ColorSizeFilter from "./color-size-filter"; // Pastikan komponen ini sudah disesuaikan B&W
 
 const IMG =
   "https://i.pinimg.com/1200x/dc/28/77/dc2877f08ba923ba34c8fa70bae94128.jpg";
 
+// --- Type Definitions (Tetap sama) ---
 type SaleItem = {
   id: string;
   name: string;
@@ -54,23 +56,23 @@ const etaRange = () => {
 };
 
 const DEF_COLORS = [
-  { name: "Maroon", hex: "#7f1d1d" },
-  { name: "Hitam", hex: "#111827" },
-  { name: "Putih", hex: "#F9FAFB" },
   { name: "Navy", hex: "#1f2937" },
+  { name: "Black", hex: "#111827" },
+  { name: "White", hex: "#F9FAFB" },
+  { name: "Grey", hex: "#6b7280" },
 ];
 
 const DEF_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 const SAMPLE: SaleItem[] = Array.from({ length: 6 }).map((_, i) => ({
   id: String(i + 1),
-  name: `Produk Sale ${i + 1}`,
-  was: 329_000 + i * 20_000,
-  price: 259_000 + i * 15_000,
+  name: `Essential Hoodie ${i + 1}`,
+  was: 899_000 + i * 50_000,
+  price: 599_000 + i * 40_000,
   href: `/product/${i + 1}?sale=1`,
   image: IMG,
   images: [IMG, IMG, IMG],
-  desc: "Material nyaman dipakai harian. Cutting rapi dan detail premium khas Blackboxinc.",
+  desc: "Crafted from premium heavy cotton, offering ultimate comfort and a sleek, modern fit. Perfect for any season.",
   rating: 4.7,
   reviews: 128 + i * 5,
   stock: 12 - i, // demo
@@ -79,18 +81,21 @@ const SAMPLE: SaleItem[] = Array.from({ length: 6 }).map((_, i) => ({
   sizes: DEF_SIZES,
 }));
 
+// --- Star Rating Component (Minimalist B&W) ---
 function StarRating({ value = 0 }: { value?: number }) {
   const full = Math.floor(value);
   const half = value - full >= 0.5;
   return (
-    <div className="flex items-center gap-0.5 text-amber-500">
+    // Mengubah warna kuning menjadi abu-abu/hitam untuk kesan elegan
+    <div className="flex items-center gap-0.5 text-gray-800">
       {Array.from({ length: 5 }).map((_, i) => {
         const filled = i < full || (i === full && half);
         return (
           <Star
             key={i}
             className={`h-4 w-4 ${
-              filled ? "fill-amber-400" : "fill-transparent"
+              // Bintang diisi dengan hitam, outline putih
+              filled ? "fill-black text-black" : "fill-transparent text-gray-300" 
             }`}
           />
         );
@@ -98,6 +103,7 @@ function StarRating({ value = 0 }: { value?: number }) {
     </div>
   );
 }
+// --- End Star Rating ---
 
 export default function ProductSale({
   items = SAMPLE,
@@ -112,12 +118,11 @@ export default function ProductSale({
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
-  // Modal helpers
+  // ... (Hooks dan logic modal tetap sama) ...
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setActive(null);
       if (e.key === "Tab" && panelRef.current) {
-        // simple focus trap
         const focusables = panelRef.current.querySelectorAll<HTMLElement>(
           'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
         );
@@ -138,7 +143,6 @@ export default function ProductSale({
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Init modal state & lock scroll
   useEffect(() => {
     if (active) {
       document.documentElement.style.overflow = "hidden";
@@ -158,39 +162,42 @@ export default function ProductSale({
   const total = useMemo(() => (active ? active.price * qty : 0), [active, qty]);
 
   return (
-    <section className="mx-auto px-4">
-      <div className="mx-auto   px-4 py-10"></div>
-      <div className="flex items-end justify-between mb-2">
+    <section className="mx-auto container md:px-4 py-12 md:py-20 bg-white">
+      {/* Header Section */}
+      <div className="flex items-end justify-between border-b border-gray-200 pb-4 mb-4">
         <div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
-            Produk Sale
+          <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+            Limited Sale
           </h2>
-          <p className="text-sm text-gray-500">
-            Diskon terbatas — buruan sebelum habis.
+          <p className="text-base text-gray-600 mt-1">
+            Exclusive discounts—shop before they're gone.
           </p>
         </div>
+        {/* CTA Button: Black Solid */}
         <Link
           href="/product?sale=true"
-          className="rounded-full bg-rose-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow hover:bg-rose-700"
+          className="rounded-lg bg-black px-5 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-md transition hover:bg-gray-800 border-2 border-black"
         >
-          Lihat Semua
+          View All
         </Link>
       </div>
+      
+      {/* Filter (Asumsi ColorSizeFilter sudah disesuaikan B&W) */}
       <ColorSizeFilter
         colors={[
-          { name: "Hitam", value: "#111827" },
-          { name: "Putih", value: "#F9FAFB" },
-          { name: "Merah", value: "#DC2626" },
-          { name: "Biru", value: "#2563EB" },
+          { name: "Black", value: "#111827" },
+          { name: "White", value: "#F9FAFB" },
+          { name: "Grey", value: "#374151" },
+          { name: "Navy", value: "#1f2937" },
         ]}
         sizes={["XS", "S", "M", "L", "XL", "XXL"]}
         onChange={(state) => {
-          // Integrasikan ke query param / store filter kamu di sini
           console.log("filter:", state);
         }}
       />
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 mb-4">
+      {/* Product Cards Grid */}
+      <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((p) => {
           const disc = Math.max(
             0,
@@ -201,88 +208,108 @@ export default function ProductSale({
               key={p.id}
               type="button"
               onClick={() => setActive(p)}
-              className="group text-left overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm ring-1 ring-rose-100 transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="group text-left block focus:outline-none transition-all duration-300 relative"
               aria-haspopup="dialog"
-              aria-label={`Lihat detail ${p.name}`}
+              aria-label={`Quick view ${p.name}`}
             >
-              <div className="relative">
+              <div className="relative overflow-hidden aspect-[3/4] bg-gray-50 border border-gray-100">
                 <img
                   src={p.image ?? IMG}
                   alt={p.name}
-                  className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  // Styling gambar: grayscale tipis, scale-up on hover
+                  className="h-full w-full object-cover grayscale-[10%] transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
                 />
-                <span className="absolute left-3 top-3 inline-flex items-center rounded-full bg-rose-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                {/* Sale Tag: Black Solid */}
+                <span className="absolute left-0 top-0 inline-flex items-center rounded-br-lg bg-black px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
                   -{disc}%
                 </span>
+                {/* Wishlist Icon */}
+                <button 
+                    className="absolute right-3 top-3 p-1 rounded-full bg-white/80 text-black shadow-md hover:bg-white transition-colors opacity-0 group-hover:opacity-100"
+                    aria-label="Add to Wishlist"
+                    onClick={(e) => {e.stopPropagation(); e.preventDefault(); /* wishlist action */}}
+                >
+                    <Heart className="h-4 w-4 fill-transparent hover:fill-black" />
+                </button>
               </div>
-              <div className="p-4">
-                <h3 className="line-clamp-1 font-semibold text-gray-900">
+              
+              {/* Product Details */}
+              <div className="mt-4 flex flex-col">
+                <h3 className="line-clamp-1 text-base font-semibold text-black uppercase tracking-wide">
                   {p.name}
                 </h3>
                 <div className="mt-1 flex items-baseline gap-2">
-                  <span className="text-rose-700 font-bold">
+                  {/* Harga Sale: Black and Bold */}
+                  <span className="text-xl font-extrabold text-black">
                     {CURRENCY(p.price)}
                   </span>
-                  <span className="text-xs text-gray-400 line-through">
+                  {/* Harga Awal: Gray and Strikethrough */}
+                  <span className="text-sm text-gray-500 line-through">
                     {CURRENCY(p.was)}
                   </span>
                 </div>
               </div>
+              
+              {/* Subtle Underline Hover Effect */}
+              <span className="absolute bottom-0 left-0 h-[1px] w-full bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
             </button>
           );
         })}
       </div>
 
-      {/* Modal Detail */}
+      {/* --- Modal Detail (Quick View) --- */}
       {active && (
         <div
-          className="fixed inset-0 z-[70]"
+          className="fixed inset-0 z-[70] overflow-y-auto" // Added overflow-y-auto
           role="dialog"
           aria-modal="true"
           aria-label={`Detail ${active.name}`}
         >
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setActive(null)}
           />
 
-          {/* Panel */}
-          <div className="absolute inset-x-4 top-6 bottom-6 mx-auto max-w-5xl">
+          {/* Panel Content Wrapper */}
+          <div className="relative mx-auto my-6 max-w-5xl"> 
             <div
               ref={panelRef}
-              className="animate-[fadeIn_180ms_ease-out] overflow-hidden rounded-3xl border border-rose-200/70 bg-white shadow-2xl"
+              className="animate-[fadeIn_180ms_ease-out] overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl"
             >
               <div className="grid gap-0 md:grid-cols-2">
+                
                 {/* Left: Gallery */}
-                <div className="relative p-4">
-                  <div className="overflow-hidden rounded-2xl">
+                <div className="relative p-0 md:p-4 bg-gray-50">
+                   {/* Main Image */}
+                  <div className="overflow-hidden">
                     <img
                       src={
                         (active.images ?? [active.image ?? IMG])[activeImg] ??
                         IMG
                       }
-                      alt={`${active.name} - gambar ${activeImg + 1}`}
-                      className="h-72 w-full object-cover md:h-[420px]"
+                      alt={`${active.name} - image ${activeImg + 1}`}
+                      className="h-72 w-full object-cover md:h-[540px] grayscale-[10%]"
                     />
                   </div>
-                  {/* thumbnails */}
-                  <div className="mt-3 flex gap-2">
+                  {/* Thumbnails */}
+                  <div className="mt-3 flex gap-2 p-3 md:p-0">
                     {(active.images ?? [active.image ?? IMG]).map((src, i) => (
                       <button
                         key={i}
                         onClick={() => setActiveImg(i)}
-                        className={`overflow-hidden rounded-xl ring-2 transition ${
+                        className={`overflow-hidden rounded-lg ring-1 transition ${
                           i === activeImg
-                            ? "ring-rose-600"
-                            : "ring-gray-200 hover:ring-rose-300"
+                            ? "ring-black ring-2"
+                            : "ring-gray-300 hover:ring-black/50"
                         }`}
-                        aria-label={`Pilih gambar ${i + 1}`}
+                        aria-label={`Select image ${i + 1}`}
                       >
                         <img
                           src={src}
                           alt={`thumb ${i + 1}`}
-                          className="h-16 w-16 object-cover"
+                          className="h-14 w-14 object-cover grayscale-[10%]"
                         />
                       </button>
                     ))}
@@ -290,12 +317,13 @@ export default function ProductSale({
                 </div>
 
                 {/* Right: Content */}
-                <div className="relative p-5 md:p-6">
+                <div className="relative p-6 md:p-8">
+                  {/* Close Button */}
                   <button
                     ref={closeBtnRef}
                     onClick={() => setActive(null)}
-                    aria-label="Tutup"
-                    className="absolute right-3 top-3 rounded-full p-2 text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    aria-label="Close"
+                    className="absolute right-4 top-4 rounded-full p-2 text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -303,58 +331,49 @@ export default function ProductSale({
                   {/* Title & rating */}
                   <div className="flex items-start justify-between gap-3 pr-8">
                     <div>
-                      <h3 className="text-lg font-extrabold tracking-tight text-gray-900">
+                      <h3 className="text-xl font-extrabold tracking-tight text-black uppercase">
                         {active.name}
                       </h3>
                       <div className="mt-1 flex items-center gap-2">
                         <StarRating value={active.rating ?? 0} />
-                        <span className="text-xs text-gray-500">
-                          {(active.rating ?? 0).toFixed(1)} •{" "}
-                          {active.reviews ?? 0} ulasan
+                        <span className="text-sm text-gray-600">
+                          {(active.rating ?? 0).toFixed(1)} rating •{" "}
+                          {active.reviews ?? 0} reviews
                         </span>
                       </div>
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-2 text-xs text-gray-500">
                         SKU:{" "}
                         <span className="font-mono">
                           {active.sku ?? `BBX-${active.id}`}
                         </span>{" "}
-                        • Stok:{" "}
+                        • Stock:{" "}
                         <span
                           className={
                             active.stock && active.stock > 0
-                              ? "text-emerald-600"
-                              : "text-rose-600"
+                              ? "text-black font-semibold" // Warna hitam untuk "In Stock"
+                              : "text-red-600 font-semibold" // Warna merah hanya untuk "Sold Out"
                           }
                         >
                           {active.stock && active.stock > 0
-                            ? `${active.stock} ready`
-                            : "Habis"}
+                            ? `${active.stock} available`
+                            : "Sold Out"}
                         </span>
                       </div>
                     </div>
-                    <button
-                      className="rounded-full p-2 text-rose-600 hover:bg-rose-50"
-                      aria-label="Tambah ke wishlist"
-                      onClick={() => {
-                        // placeholder action
-                        window.dispatchEvent(
-                          new CustomEvent("wishlist:add", { detail: active })
-                        );
-                      }}
-                    >
-                      <Heart className="h-5 w-5" />
-                    </button>
                   </div>
 
                   {/* Price */}
-                  <div className="mt-3 flex items-end gap-2">
-                    <span className="text-2xl font-extrabold text-rose-700">
+                  <div className="mt-4 flex items-end gap-3 border-t border-b border-gray-100 py-3">
+                    {/* Harga Sale: Black and Extrabold */}
+                    <span className="text-3xl font-extrabold text-black">
                       {CURRENCY(active.price)}
                     </span>
-                    <span className="text-sm text-gray-400 line-through">
+                    {/* Harga Awal: Gray and Strikethrough */}
+                    <span className="text-base text-gray-500 line-through">
                       {CURRENCY(active.was)}
                     </span>
-                    <span className="inline-flex items-center rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-rose-700 ring-1 ring-rose-200">
+                    {/* Discount Tag: Black Solid */}
+                    <span className="inline-flex items-center rounded-lg bg-black px-2 py-1 text-xs font-bold uppercase tracking-wider text-white">
                       -
                       {Math.max(
                         0,
@@ -368,15 +387,15 @@ export default function ProductSale({
 
                   {/* Desc */}
                   {active.desc && (
-                    <p className="mt-3 text-sm text-gray-600">{active.desc}</p>
+                    <p className="mt-4 text-sm text-gray-700">{active.desc}</p>
                   )}
 
                   {/* Options */}
-                  <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="mt-6 grid grid-cols-1 gap-5">
                     {/* Colors */}
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                        Warna
+                      <div className="text-xs font-bold uppercase tracking-wider text-black">
+                        Color: <span className="font-normal text-gray-600">{color}</span>
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {(active.colors ?? DEF_COLORS).map((c) => {
@@ -385,20 +404,20 @@ export default function ProductSale({
                             <button
                               key={c.name}
                               onClick={() => setColor(c.name)}
-                              className={`relative grid h-9 w-9 place-content-center rounded-full ring-1 transition ${
+                              className={`relative grid h-8 w-8 place-content-center rounded-full ring-2 transition ${
+                                // Selected: Black ring, Non-selected: Gray ring
                                 selected
-                                  ? "ring-rose-600 ring-2"
-                                  : "ring-gray-200 hover:ring-rose-300"
+                                  ? "ring-black ring-offset-2" 
+                                  : "ring-gray-300 hover:ring-black/50"
                               }`}
                               aria-pressed={selected}
                               aria-label={c.name}
                               title={c.name}
                             >
                               <span
-                                className="h-6 w-6 rounded-full"
+                                className="h-6 w-6 rounded-full border border-gray-200"
                                 style={{
                                   backgroundColor: c.hex,
-                                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,.08)",
                                 }}
                               />
                             </button>
@@ -409,8 +428,8 @@ export default function ProductSale({
 
                     {/* Sizes */}
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                        Ukuran
+                      <div className="text-xs font-bold uppercase tracking-wider text-black">
+                        Size: <span className="font-normal text-gray-600">{size}</span>
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {(active.sizes ?? DEF_SIZES).map((s) => {
@@ -419,10 +438,12 @@ export default function ProductSale({
                             <button
                               key={s}
                               onClick={() => setSize(s)}
-                              className={`rounded-lg px-3 py-2 text-sm font-semibold ring-1 transition ${
+                              className={`rounded-lg px-4 py-2 text-sm font-semibold ring-1 transition ${
+                                // Selected: Black background, White text
                                 selected
-                                  ? "bg-rose-600 text-white ring-rose-600"
-                                  : "bg-white text-gray-700 ring-gray-200 hover:ring-rose-300"
+                                  ? "bg-black text-white ring-black"
+                                  // Non-selected: White background, Black text, Gray ring
+                                  : "bg-white text-gray-700 ring-gray-300 hover:ring-black/50"
                               }`}
                               aria-pressed={selected}
                             >
@@ -435,38 +456,38 @@ export default function ProductSale({
                   </div>
 
                   {/* Qty + Total */}
-                  <div className="mt-5 flex flex-wrap items-center gap-4">
-                    <div className="inline-flex items-center rounded-xl border border-gray-200">
+                  <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-gray-100 pt-4">
+                    <div className="inline-flex items-center rounded-lg border border-gray-300">
                       <button
-                        className="p-2 hover:bg-gray-50"
-                        aria-label="Kurangi"
+                        className="p-2 hover:bg-gray-50 rounded-l-lg"
+                        aria-label="Decrease quantity"
                         onClick={() => setQty((q) => Math.max(1, q - 1))}
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-4 w-4 text-black" />
                       </button>
                       <input
                         type="number"
-                        className="w-12 border-0 text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-12 border-x border-gray-300 text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-black font-semibold"
                         value={qty}
                         min={1}
                         onChange={(e) => {
                           const val = parseInt(e.target.value, 10);
                           setQty(Number.isNaN(val) ? 1 : Math.max(1, val));
                         }}
-                        aria-label="Jumlah"
+                        aria-label="Quantity"
                       />
                       <button
-                        className="p-2 hover:bg-gray-50"
-                        aria-label="Tambah"
+                        className="p-2 hover:bg-gray-50 rounded-r-lg"
+                        aria-label="Increase quantity"
                         onClick={() => setQty((q) => q + 1)}
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4 text-black" />
                       </button>
                     </div>
 
-                    <div className="text-sm text-gray-600">
+                    <div className="text-base text-gray-700 font-medium">
                       Total:{" "}
-                      <span className="font-bold text-gray-900">
+                      <span className="font-extrabold text-black">
                         {CURRENCY(total)}
                       </span>
                     </div>
@@ -474,72 +495,86 @@ export default function ProductSale({
 
                   {/* CTAs */}
                   <div className="mt-6 flex flex-wrap items-center gap-3">
+                    {/* Add to Cart: Black Solid */}
                     <button
-                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 px-4 py-2.5 text-sm font-bold text-white shadow hover:from-rose-700 hover:to-rose-800"
+                      className="inline-flex flex-1 items-center justify-center rounded-lg bg-black px-6 py-3 text-base font-bold text-white shadow-xl hover:bg-gray-800 transition-colors uppercase tracking-wider disabled:bg-gray-400"
                       onClick={() => {
                         if (!color || !size)
-                          return alert("Pilih warna & ukuran dulu ya.");
+                          return alert("Please select a color and size first.");
                         // Placeholder add-to-cart event
                         window.dispatchEvent(
                           new CustomEvent("cart:add", {
                             detail: { ...active, color, size, qty },
                           })
                         );
-                        alert("Ditambahkan ke keranjang!");
+                        // Optional: close modal on success
+                        setActive(null);
                       }}
+                      disabled={!active.stock || active.stock <= 0}
                     >
-                      Tambah ke Keranjang
+                      Add to Cart
                     </button>
+                    {/* Buy Now: White/Bordered */}
                     <Link
                       href={active.href}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-black px-4 py-3 text-base font-semibold text-black hover:bg-gray-50 transition-colors"
                     >
-                      Beli Sekarang <ArrowRight className="h-4 w-4" />
+                      Buy Now
                     </Link>
-                    <button
-                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      onClick={() => {
-                        const shareText = `${active.name} — ${CURRENCY(
-                          active.price
-                        )} (${CURRENCY(active.was)})`;
-                        navigator.clipboard.writeText(
-                          `${shareText} ${location.origin}${active.href}`
-                        );
-                        alert("Link produk disalin.");
-                      }}
-                    >
-                      <Share2 className="h-4 w-4" /> Bagikan
-                    </button>
                   </div>
 
+                  {/* Wishlist & Share */}
+                  <div className="mt-4 flex gap-4 text-sm font-medium">
+                    <button
+                      className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
+                      aria-label="Add to wishlist"
+                      onClick={() => {
+                        window.dispatchEvent(
+                          new CustomEvent("wishlist:add", { detail: active })
+                        );
+                        alert("Added to wishlist!");
+                      }}
+                    >
+                      <Heart className="h-5 w-5 fill-transparent hover:fill-black text-black" /> Wishlist
+                    </button>
+                    <button
+                      className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
+                      onClick={() => {
+                        const shareText = `${active.name} — ${CURRENCY(active.price)}`;
+                        navigator.clipboard.writeText(`${shareText} ${location.origin}${active.href}`);
+                        alert("Product link copied.");
+                      }}
+                    >
+                      <Share2 className="h-5 w-5 text-black" /> Share
+                    </button>
+                  </div>
+                  
                   {/* Shipping & Guarantee */}
-                  <div className="mt-6 grid grid-cols-1 gap-3 text-sm text-gray-700 sm:grid-cols-2">
-                    <div className="flex items-center gap-2 rounded-xl border border-rose-100 bg-rose-50 px-3 py-2">
-                      <Truck className="h-4 w-4 text-rose-700" />
-                      Estimasi tiba: {etaRange()}
+                  <div className="mt-6 grid grid-cols-1 gap-3 text-sm text-gray-700 border-t border-gray-100 pt-6 sm:grid-cols-2">
+                    <div className="flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 bg-gray-50">
+                      <Truck className="h-5 w-5 text-black" />
+                      ETA: {etaRange()}
                     </div>
-                    <div className="flex items-center gap-2 rounded-xl border border-rose-100 bg-rose-50 px-3 py-2">
-                      <ShieldCheck className="h-4 w-4 text-rose-700" />
-                      Garansi tukar 7 hari
+                    <div className="flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 bg-gray-50">
+                      <ShieldCheck className="h-5 w-5 text-black" />
+                      7-day exchange guarantee
                     </div>
                   </div>
 
                   {/* Details/Specs */}
-                  <div className="mt-6 rounded-2xl border border-gray-200">
+                  <div className="mt-6 rounded-xl border border-gray-300">
                     <details className="group">
-                      <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-gray-900">
-                        Detail & Spesifikasi
-                        <span className="text-gray-400 group-open:rotate-180 transition">
+                      <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-black uppercase tracking-wider">
+                        Details & Specifications
+                        <span className="text-gray-500 group-open:rotate-180 transition">
                           ⌄
                         </span>
                       </summary>
                       <div className="border-t border-gray-200 px-4 py-3 text-sm text-gray-700">
                         <ul className="ms-4 list-disc space-y-1">
-                          <li>Bahan: Cotton blend premium</li>
-                          <li>
-                            Perawatan: Cuci dingin, jangan gunakan pemutih
-                          </li>
-                          <li>Asal: Indonesia</li>
+                          <li>Material: Premium heavy cotton blend</li>
+                          <li>Care: Cold wash, do not bleach</li>
+                          <li>Origin: Indonesia</li>
                         </ul>
                         <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600 sm:grid-cols-3">
                           <div>
@@ -547,10 +582,10 @@ export default function ProductSale({
                             {active.sku ?? `BBX-${active.id}`}
                           </div>
                           <div>
-                            <span className="text-gray-500">Berat:</span> ~350g
+                            <span className="text-gray-500">Weight:</span> ~350g
                           </div>
                           <div>
-                            <span className="text-gray-500">Kategori:</span>{" "}
+                            <span className="text-gray-500">Category:</span>{" "}
                             Sale
                           </div>
                         </div>
@@ -562,9 +597,9 @@ export default function ProductSale({
             </div>
 
             {/* helper text */}
-            <div className="mt-3 text-center text-xs text-white/80">
-              Tekan <kbd className="rounded bg-white/20 px-1">Esc</kbd> atau
-              klik di luar untuk menutup
+            <div className="mt-3 text-center text-sm text-white/90">
+              Press <kbd className="rounded bg-black/50 px-1 py-0.5 text-white">Esc</kbd> or
+              click outside to close
             </div>
           </div>
         </div>

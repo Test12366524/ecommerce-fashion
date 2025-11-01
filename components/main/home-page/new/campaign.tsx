@@ -1,3 +1,4 @@
+// Campaign.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +12,7 @@ import {
   ShieldCheck,
   Headphones,
 } from "lucide-react";
+import clsx from "clsx"; // Tambahkan ini untuk class conditional
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState<Date>(() => new Date());
@@ -58,145 +60,149 @@ export default function Campaign({
   const safePercent = Math.max(0, Math.min(100, Math.round(percentClaimed)));
 
   return (
-    <section className="relative isolate">
-      {/* background merah elegan */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-rose-600 via-red-700 to-rose-900" />
-      <div className="absolute inset-x-0 -top-24 -z-10 h-48 bg-[radial-gradient(60%_60%_at_50%_100%,rgba(255,255,255,0.18),transparent)]" />
+    <section className="relative isolate overflow-hidden bg-black text-white">
+      {/* Background - Minimalist, dark gradient for depth */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90" />
+      {/* Subtle radial gradient for spotlight effect */}
+      <div className="absolute inset-x-0 -top-24 -z-10 h-48 bg-[radial-gradient(60%_60%_at_50%_100%,rgba(255,255,255,0.08),transparent)]" />
 
-      <div className="mx-auto   px-4 py-10 sm:py-12 md:py-14">
+      <div className="mx-auto container px-4 py-10 sm:py-12 md:py-16 lg:py-20">
         {/* Headline */}
         <div className="flex items-center justify-center gap-2">
-          <Sparkles className="h-5 w-5 text-rose-50/80" />
-          <p className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-50/90">
-            Blackboxinc Campaign
+          {/* Sparkles icon with a subtle gold/silver touch */}
+          <Sparkles className="h-5 w-5 text-gray-400" /> 
+          <p className="rounded-full border border-gray-700 bg-gray-800/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">
+            Blackboxinc Exclusive
           </p>
-          <Sparkles className="h-5 w-5 text-rose-50/80" />
+          <Sparkles className="h-5 w-5 text-gray-400" />
         </div>
 
-        <h2 className="mt-3 text-center text-2xl font-extrabold tracking-tight text-white sm:text-3xl md:text-4xl">
-          Mid-Season Deals — Hemat Hingga{" "}
-          <span className="underline decoration-white/40">20%</span>
+        <h2 className="mt-4 text-center text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
+          Seasonal Sale — Save Up To{" "}
+          <span className="underline decoration-gray-400/50">20% Off</span>
         </h2>
-        <p className="mx-auto mt-2 max-w-2xl text-center text-sm text-rose-50/80">
-          Gunakan kode kupon berikut. Berlaku hingga kampanye berakhir atau
-          selama persediaan masih ada.
+        <p className="mx-auto mt-3 max-w-2xl text-center text-base text-gray-400 sm:text-lg">
+          Elevate your style with our limited-time offer. Use the code below at checkout.
         </p>
 
         {/* Grid: countdown + coupon + progress */}
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8 max-w-5xl mx-auto">
           {/* Countdown */}
-          <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-            <div className="mb-2 flex items-center gap-2 text-rose-50/90">
-              <Clock className="h-4 w-4" />
-              <span className="text-xs font-medium tracking-wide">
-                Berakhir Dalam
+          <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-5 backdrop-blur-sm shadow-lg">
+            <div className="mb-3 flex items-center gap-2 text-gray-300">
+              <Clock className="h-5 w-5" />
+              <span className="text-sm font-medium tracking-wide uppercase">
+                Ends In
               </span>
             </div>
             <div className="flex items-center justify-between text-white">
               {[
-                { label: "Hari", value: days },
-                { label: "Jam", value: hours },
-                { label: "Menit", value: minutes },
-                { label: "Detik", value: seconds },
+                { label: "Days", value: days },
+                { label: "Hours", value: hours },
+                { label: "Minutes", value: minutes },
+                { label: "Seconds", value: seconds },
               ].map((seg) => (
                 <div key={seg.label} className="flex flex-col items-center">
-                  <div className="min-w-[58px] rounded-xl bg-red-900/50 px-3 py-2 text-center text-2xl font-bold leading-none shadow-inner">
+                  <div className="min-w-[60px] md:min-w-[68px] rounded-lg bg-gray-800 px-3 py-2 text-center text-2xl md:text-3xl font-bold leading-none shadow-inner">
                     {String(seg.value).padStart(2, "0")}
                   </div>
-                  <span className="mt-1 text-[10px] uppercase tracking-wider text-rose-50/70">
+                  <span className="mt-1 text-[10px] uppercase tracking-wider text-gray-500">
                     {seg.label}
                   </span>
                 </div>
               ))}
             </div>
             {finished && (
-              <p className="mt-3 text-center text-xs text-rose-200">
-                Kampanye berakhir
+              <p className="mt-4 text-center text-sm text-gray-400">
+                Campaign has ended.
               </p>
             )}
           </div>
 
           {/* Coupon */}
-          <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-            <div className="mb-2 flex items-center gap-2 text-rose-50/90">
-              <Tag className="h-4 w-4" />
-              <span className="text-xs font-medium tracking-wide">
-                Kode Kupon
+          <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-5 backdrop-blur-sm shadow-lg">
+            <div className="mb-3 flex items-center gap-2 text-gray-300">
+              <Tag className="h-5 w-5" />
+              <span className="text-sm font-medium tracking-wide uppercase">
+                Coupon Code
               </span>
             </div>
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="rounded-lg bg-red-900/60 px-3 py-2 font-mono text-lg font-bold tracking-wider text-white">
-                  {code}
-                </span>
-              </div>
+              <span className="rounded-lg bg-gray-800 px-4 py-2 font-mono text-lg font-bold tracking-wider text-white select-all">
+                {code}
+              </span>
               <button
                 onClick={onCopy}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/15 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+                className={clsx(
+                    "inline-flex items-center gap-2 rounded-lg border",
+                    "border-gray-600 bg-gray-700 px-4 py-2 text-sm font-semibold text-white",
+                    "transition-colors hover:bg-gray-600 hover:border-gray-500",
+                    {"bg-black border-black": copied} // Efek saat disalin
+                )}
                 aria-label="Copy coupon code"
               >
                 <Zap className="h-4 w-4" />
-                {copied ? "Disalin!" : "Salin"}
+                {copied ? "Copied!" : "Copy"}
               </button>
             </div>
-            <p className="mt-2 text-xs text-rose-50/70">
-              Masukkan saat checkout. S&K berlaku.
+            <p className="mt-3 text-sm text-gray-500">
+              Apply at checkout. Terms & conditions apply.
             </p>
           </div>
 
           {/* Progress */}
-          <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
-            <div className="mb-2 flex items-center gap-2 text-rose-50/90">
-              <Truck className="h-4 w-4" />
-              <span className="text-xs font-medium tracking-wide">
-                Klaim Promo
+          <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-5 backdrop-blur-sm shadow-lg">
+            <div className="mb-3 flex items-center gap-2 text-gray-300">
+              <Sparkles className="h-5 w-5" /> {/* Ganti Truck ke Sparkles untuk kesan 'limited' */}
+              <span className="text-sm font-medium tracking-wide uppercase">
+                Limited Stock
               </span>
             </div>
-            <div className="relative h-10 overflow-hidden rounded-xl border border-white/10 bg-red-900/30">
+            <div className="relative h-10 overflow-hidden rounded-lg border border-gray-600 bg-gray-800">
               <div
-                className="h-full bg-gradient-to-r from-rose-300 to-red-200"
+                className="h-full bg-gradient-to-r from-gray-500 to-gray-400" // Gradasi abu-abu
                 style={{ width: `${safePercent}%` }}
                 aria-hidden
               />
               <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-white">
-                {safePercent}% Terpakai
+                {safePercent}% Claimed
               </div>
             </div>
-            <p className="mt-2 text-xs text-rose-50/70">
-              Stok promo terbatas. Segera checkout sebelum habis.
+            <p className="mt-3 text-sm text-gray-500">
+              Hurry! Offers are selling out fast. Don't miss out.
             </p>
           </div>
         </div>
 
-        {/* Perks */}
-        <div className="mt-6 grid grid-cols-1 gap-3 text-rose-50/90 sm:grid-cols-3">
-          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2">
-            <ShieldCheck className="h-4 w-4" />
-            <span className="text-xs">Garansi 30 hari</span>
+        {/* Perks / Value Propositions */}
+        <div className="mt-12 grid grid-cols-1 gap-4 text-gray-300 sm:grid-cols-3 max-w-4xl mx-auto">
+          <div className="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
+            <ShieldCheck className="h-5 w-5 text-gray-400" />
+            <span className="text-sm font-medium uppercase tracking-wide">30-Day Guarantee</span>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2">
-            <Truck className="h-4 w-4" />
-            <span className="text-xs">Gratis ongkir tertentu</span>
+          <div className="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
+            <Truck className="h-5 w-5 text-gray-400" />
+            <span className="text-sm font-medium uppercase tracking-wide">Worldwide Shipping</span>
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3 py-2">
-            <Headphones className="h-4 w-4" />
-            <span className="text-xs">Support 24/7</span>
+          <div className="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
+            <Headphones className="h-5 w-5 text-gray-400" />
+            <span className="text-sm font-medium uppercase tracking-wide">24/7 Support</span>
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        {/* Call to Action Buttons */}
+        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/product?campaign=mid-season"
-            className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 px-5 py-3 text-sm font-bold text-white transition hover:from-rose-600 hover:to-red-700"
+            className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-base font-bold text-black transition hover:bg-gray-200 uppercase tracking-wide shadow-lg"
           >
-            Belanja Sekarang
+            Shop Now
           </Link>
           <Link
             href="/how-to-order"
-            className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+            className="inline-flex items-center justify-center rounded-lg border border-gray-600 bg-transparent px-8 py-3 text-base font-semibold text-gray-300 transition hover:bg-gray-800 hover:text-white uppercase tracking-wide"
           >
-            Lihat S&K
+            Learn More
           </Link>
         </div>
       </div>

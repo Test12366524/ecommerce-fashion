@@ -54,14 +54,18 @@ import type { Address } from "@/types/address";
 import {
   CreateTransactionFrontendRequest,
   CreateTransactionRequest,
-  PaymentType,
+  PaymentChannel,
+  PaymentMethod,
 } from "@/types/admin/transaction";
 
 const STORAGE_KEY = "cart-storage";
 
+type PaymentType = "automatic" | "manual" | "cod";
+
 type StoredCartItem = Product & { quantity: number };
 interface CartItemView {
   id: number;
+  product_variant_id: number;
   name: string;
   price: number;
   originalPrice?: number;
@@ -196,6 +200,7 @@ function getImageUrlFromProduct(p: Product): string {
 function mapStoredToView(items: StoredCartItem[]): CartItemView[] {
   return items.map((it) => ({
     id: it.id,
+    product_variant_id: typeof it.product_variant_id === "number" ? it.product_variant_id : 0,
     name: it.name,
     price: it.price,
     originalPrice: undefined,
@@ -204,7 +209,7 @@ function mapStoredToView(items: StoredCartItem[]): CartItemView[] {
     category: it.category_name,
     ageGroup: "Semua usia",
     isEcoFriendly: false,
-    inStock: (it.duration ?? 0) > 0,
+    inStock: (it.stock ?? 0) > 0,
   }));
 }
 
@@ -217,12 +222,14 @@ export default function CartPage() {
   const sessionName = useMemo(() => session?.user?.name ?? "", [session]);
 
   const [cartItems, setCartItems] = useState<CartItemView[]>([]);
+  console.log(cartItems);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
 
-  const [paymentType, setPaymentType] = useState<PaymentType>("manual");
+  const [paymentType, setPaymentType] = useState("automatic");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank_transfer");
+  const [paymentChannel, setPaymentChannel] = useState<PaymentChannel>("bca");
 
-  const [paymentMethod, setPaymentMethod] = useState("");
   const [shippingCourier, setShippingCourier] = useState<string | null>(null);
   const [shippingMethod, setShippingMethod] =
     useState<ShippingCostOption | null>(null);
@@ -510,12 +517,15 @@ export default function CartPage() {
       const payload: CreateTransactionRequest = {
         address_line_1: shippingInfo.address_line_1,
         postal_code: shippingInfo.postal_code,
-        payment_method: paymentType, // "midtrans" | "manual" | "cod"
+        payment_type: 'automatic',
+        payment_method: paymentMethod, // "midtrans" | "manual" | "cod"
+        payment_channel: paymentChannel, // "midtrans" | "manual" | "cod"
         data: [
           {
             shop_id: 1,
             details: stored.map((item) => ({
               product_id: item.id,
+              product_variant_id: item.id,
               quantity: item.quantity ?? 1,
             })),
             shipment: {
@@ -546,34 +556,59 @@ export default function CartPage() {
       };
 
       const result = await createTransaction(payload).unwrap();
+      let paymentLink: string | null = null;
 
-      if (
-        result &&
-        result.data &&
-        typeof result.data === "object" &&
-        "payment_link" in result.data
-      ) {
-        await Swal.fire({
-          icon: "success",
-          title: "Pesanan Berhasil Dibuat",
-          text: "Silakan lanjutkan ke halaman pembayaran.",
-          confirmButtonText: "Lanjut ke Pembayaran",
-        });
-        window.open(
-          (result.data as { payment_link: string }).payment_link,
-          "_blank"
-        );
-        clearCart();
-        setTimeout(() => {
-          router.push("/me");
-        }, 2000);
-      } else {
-        await Swal.fire({
-          icon: "info",
-          title: "Pesanan Dibuat",
-          text: "Pesanan berhasil dibuat, tetapi tidak dapat membuka link pembayaran.",
-        });
-      }
+        if (result.data && typeof result.data === 'object') {
+            const payment = (result.data as { payment?: { account_number?: string } }).payment;
+            
+            // Cek apakah payment object dan account_number (yang berisi link) tersedia
+            if (payment?.account_number) {
+                paymentLink = payment.account_number;
+            }
+        }
+        
+        if (paymentLink) {
+            await Swal.fire({
+                icon: "success",
+                title: "Pesanan Berhasil Dibuat",
+                text: "Silakan lanjutkan ke halaman pembayaran.",
+                confirmButtonText: "Lanjut ke Pembayaran",
+                confirmButtonColor: "#000000",
+            });
+            
+            // Langsung buka link pembayaran
+            window.open(paymentLink, "_blank");
+
+            clearCart();
+            setTimeout(() => {
+                router.push("/me");
+            }, 2000);
+
+        } else if (
+            result.data &&
+            typeof result.data === "object" &&
+            !Array.isArray(result.data) &&
+            "reference" in result.data
+        ) {
+             // Jika tidak ada payment link (misal: Manual Transfer / COD), tampilkan pesan berhasil dibuat
+             await Swal.fire({
+                icon: "success",
+                title: "Pesanan Dibuat",
+                text: `Pesanan #${(result.data as { reference?: string }).reference} berhasil dibuat. Silakan cek halaman Pesanan Anda.`,
+                confirmButtonText: "Lihat Pesanan Saya",
+                confirmButtonColor: "#000000",
+            });
+            clearCart();
+            router.push("/me");
+        } else {
+            // Fallback pesan jika tidak ada link dan tidak ada reference (kasus tidak terduga)
+             await Swal.fire({
+                icon: "info",
+                title: "Pesanan Dibuat",
+                text: "Pesanan berhasil dibuat, tetapi tidak dapat membuka link pembayaran. Silakan cek profil Anda.",
+                confirmButtonColor: "#000000",
+            });
+        }
     } catch (err: unknown) {
       console.error("Error creating transaction:", err);
 
@@ -824,13 +859,10 @@ export default function CartPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl font-bold text-[#6B6B6B]">
-                          Rp {item.price.toLocaleString("id-ID")}
+                          Rp {(item.price * 1).toLocaleString(
+                              "id-ID"
+                            )}
                         </span>
-                        {item.originalPrice && (
-                          <span className="text-lg text-gray-400 line-through">
-                            Rp {item.originalPrice.toLocaleString("id-ID")}
-                          </span>
-                        )}
                       </div>
 
                       <div className="flex items-center gap-3">
@@ -1191,115 +1223,100 @@ export default function CartPage() {
                 Metode Pembayaran
               </h3>
 
-              <div className="space-y-4">
+                <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tipe Pembayaran
+                  Tipe Pembayaran
                   </label>
                   <div className="space-y-2">
-                    <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors hover:bg-neutral-50">
-                      <input
-                        type="radio"
-                        name="payment-type"
-                        value="midtrans"
-                        checked={paymentType === "midtrans"}
-                        onChange={(e) =>
-                          setPaymentType(e.currentTarget.value as PaymentType)
-                        }
-                        className="form-radio text-[#6B6B6B] h-4 w-4"
-                      />
-                      <div>
-                        <p className="font-medium">Otomatis</p>
-                        <p className="text-sm text-gray-500">
-                          Pembayaran online (Gateway)
-                        </p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors hover:bg-neutral-50">
-                      <input
-                        type="radio"
-                        name="payment-type"
-                        value="manual"
-                        checked={paymentType === "manual"}
-                        onChange={(e) =>
-                          setPaymentType(e.currentTarget.value as PaymentType)
-                        }
-                        className="form-radio text-[#6B6B6B] h-4 w-4"
-                      />
-                      <div>
-                        <p className="font-medium">Manual</p>
-                        <p className="text-sm text-gray-500">
-                          Transfer bank manual
-                        </p>
-                      </div>
-                    </label>
-
-                    {shippingCourier !== "international" && (
-                      <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors hover:bg-neutral-50">
-                        <input
-                          type="radio"
-                          name="payment-type"
-                          value="cod"
-                          checked={paymentType === "cod"}
-                          onChange={(e) =>
-                            setPaymentType(e.currentTarget.value as PaymentType)
-                          }
-                          className="form-radio text-[#6B6B6B] h-4 w-4"
-                        />
-                        <div>
-                          <p className="font-medium">COD</p>
-                          <p className="text-sm text-gray-500">
-                            +Fee 2% terhadap nilai pesanan
-                          </p>
-                        </div>
-                      </label>
-                    )}
+                  <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors hover:bg-neutral-50">
+                    <input
+                    type="radio"
+                    name="payment-type"
+                    value="automatic"
+                    checked={paymentType === "automatic"}
+                    onChange={(e) =>
+                      setPaymentType(e.currentTarget.value as PaymentType)
+                    }
+                    className="form-radio text-[#6B6B6B] h-4 w-4"
+                    />
+                    <div>
+                    <p className="font-medium">Otomatis</p>
+                    <p className="text-sm text-gray-500">
+                      Pembayaran online (Gateway)
+                    </p>
+                    </div>
+                  </label>
                   </div>
                 </div>
 
-                {paymentType === "manual" && (
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 text-blue-600 mt-0.5" />
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-blue-900 mb-2">
-                            Rekening Tujuan Transfer
-                          </h4>
-
-                          <div className="bg-white p-3 rounded-lg mb-3">
-                            <p className="font-semibold text-gray-900">
-                              ISMAIL MARZUKI
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Bank Mandiri
-                            </p>
-                            <p className="font-mono text-lg font-bold text-gray-900">
-                              1340010955069
-                            </p>
-                          </div>
-
-                          <div className="bg-white p-3 rounded-lg">
-                            <p className="font-semibold text-gray-900">
-                              Herlina Hartosuharto
-                            </p>
-                            <p className="text-sm text-gray-600">Bank BCA</p>
-                            <p className="font-mono text-lg font-bold text-gray-900">
-                              3030727834
-                            </p>
-                          </div>
-
-                          <p className="text-sm text-blue-700 mt-3">
-                            Setelah transfer, Anda dapat mengupload bukti
-                            pembayaran melalui halaman profil pesanan.
-                          </p>
-                        </div>
-                      </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Metode Pembayaran
+                  </label>
+                  <div className="space-y-2">
+                  <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors hover:bg-neutral-50">
+                    <input
+                    type="radio"
+                    name="payment-method"
+                    value="bank_transfer"
+                    checked={paymentMethod === "bank_transfer"}
+                    onChange={(e) => setPaymentMethod(e.currentTarget.value as PaymentMethod)}
+                    className="form-radio text-[#6B6B6B] h-4 w-4"
+                    />
+                    <div>
+                    <p className="font-medium">Bank Transfer</p>
+                    <p className="text-sm text-gray-500">
+                      Transfer ke rekening bank
+                    </p>
                     </div>
+                  </label>
+                  <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors hover:bg-neutral-50">
+                    <input
+                    type="radio"
+                    name="payment-method"
+                    value="qris"
+                    checked={paymentMethod === "qris"}
+                    onChange={(e) => setPaymentMethod(e.currentTarget.value as PaymentMethod)}
+                    className="form-radio text-[#6B6B6B] h-4 w-4"
+                    />
+                    <div>
+                    <p className="font-medium">QRIS</p>
+                    <p className="text-sm text-gray-500">
+                      Pembayaran via QRIS
+                    </p>
+                    </div>
+                  </label>
+                  </div>
+                </div>
+
+                {paymentMethod === "bank_transfer" && (
+                  <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pilih Bank
+                  </label>
+                  <Select
+                    value={paymentChannel}
+                    onValueChange={(val) =>
+                    setPaymentChannel(val as PaymentChannel)
+                    }
+                  >
+                    <SelectTrigger>
+                    <SelectValue placeholder="Pilih Bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    <SelectItem value="bnc">BNC</SelectItem>
+                    <SelectItem value="bjb">BJB</SelectItem>
+                    <SelectItem value="bca">BCA</SelectItem>
+                    <SelectItem value="bni">BNI</SelectItem>
+                    <SelectItem value="bsi">BSI</SelectItem>
+                    <SelectItem value="bss">BSS</SelectItem>
+                    <SelectItem value="cimb">CIMB</SelectItem>
+                    </SelectContent>
+                  </Select>
                   </div>
                 )}
-              </div>
+                </div>
             </div>
 
             <div className="bg-white rounded-3xl p-6 shadow-lg hidden">

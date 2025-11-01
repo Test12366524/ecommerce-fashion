@@ -329,14 +329,14 @@ export default function FormProduct({
           </div>
 
           <div className="flex flex-col gap-y-1">
-            <Label>{isJasaMerk ? "Durasi" : "Stok"}</Label>
+            <Label>Stok</Label>
             <Input
               type="number"
-              value={form.duration ?? ""}
+              value={form.stock ?? ""}
               onChange={(e) =>
                 setForm({
                   ...form,
-                  duration: e.target.value ? Number(e.target.value) : undefined,
+                  stock: e.target.value ? Number(e.target.value) : undefined,
                 })
               }
               readOnly={readonly}

@@ -4,6 +4,8 @@ import { ProductMerk } from "../master/product-merk";
 export interface Product {
   id: number;
   shop_id: number | string | null;
+  sku?: string | null;
+  product_variant_id?: number | null;
   product_category_id: number | null;
   product_category: ProductCategory;
   product_merk_id: number | null;
@@ -21,7 +23,8 @@ export interface Product {
   price: number;
   rating: number | string;
   total_reviews: number;
-  duration: number;
+  stock: number;
+  duration?: number;
   weight: number;
   length: number;
   width: number;
@@ -35,7 +38,7 @@ export interface Product {
   image_5: File | string | null;
   image_6: File | string | null;
   image_7: File | string | null;
-
+  was?: number;
   kecamatan?: string;
   terlaris?: boolean;
   terbaru?: boolean;

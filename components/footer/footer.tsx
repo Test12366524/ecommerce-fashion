@@ -1,3 +1,4 @@
+// components/sections/Footer.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -12,9 +13,13 @@ import {
   Shield,
   Award,
   ArrowRight,
+  Diamond,
+  ShieldCheck, // Ikon premium baru
 } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaWhatsapp } from "react-icons/fa";
 import Image from "next/image";
+import clsx from "clsx";
+import Link from "next/link";
 
 export default function Footer() {
   const router = useRouter();
@@ -24,141 +29,178 @@ export default function Footer() {
     router.push("/faq");
   };
 
+  // Konten FAQ disesuaikan untuk Fashion
   const faqs = [
     {
-      question: "Apakah produkBLACKBOXINC Shop aman untuk semua jenis kulit?",
+      question: "Apa kebijakan pengembalian produk Blackboxinc?",
       answer:
-        "Ya, semua produkBLACKBOXINC Shop diformulasikan dengan bahan alami dan telah diuji dermatologi, sehingga aman digunakan untuk berbagai jenis kulit.",
+        "Kami menerima pengembalian dan penukaran dalam 30 hari sejak tanggal pembelian, selama produk dalam kondisi asli (belum dipakai dan label masih lengkap).",
     },
     {
-      question: "Apakah ada sertifikasi untuk produkBLACKBOXINC Shop?",
+      question: "Bagaimana cara menentukan ukuran yang tepat?",
       answer:
-        "ProdukBLACKBOXINC Shop telah tersertifikasi BPOM dan melalui uji klinis, sehingga terjamin kualitas dan keamanannya.",
+        "Anda dapat merujuk ke 'Size Guide' kami yang tersedia di halaman setiap produk untuk pengukuran detail. Jika ragu, hubungi tim support kami.",
     },
   ];
 
+  // Tautan Cepat
   const quickLinks = [
-    { name: "Beranda", href: "/" },
-    { name: "Tentang Kami", href: "/about" },
-    { name: "Produk", href: "/product" },
-    { name: "Layanan", href: "/service" },
-    { name: "Testimoni", href: "/#testimonials" },
+    { name: "Home", href: "/" },
+    { name: "About Us", href: "/about" },
+    { name: "Shop", href: "/product" },
+    { name: "Best Sellers", href: "/best-seller" },
+    { name: "Contact", href: "/contact" },
   ];
 
+  // Tautan Layanan Pelanggan
+  const serviceLinks = [
+    { name: "Shipping & Returns", href: "/shipping" },
+    { name: "Size Guide", href: "/size-guide" },
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms & Conditions", href: "/terms" },
+  ];
+
+  const toggleAccordion = (index: number) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
+  
+  // Mengganti logo Image dengan teks brand jika gambar logo tidak relevan dengan B&W
+  const BrandLogo = () => (
+      <Link href="/" className="group inline-flex flex-col items-start select-none">
+          <h1 className="font-extrabold tracking-[0.2em] text-black text-xl leading-none">
+              BLACKBOXINC
+          </h1>
+          <span className="mt-1 text-[10px] uppercase tracking-[0.3em] text-gray-700">
+              Timeless Style
+          </span>
+      </Link>
+  );
+
+
   return (
-    <footer className="bg-gray-50 text-gray-700 relative overflow-hidden border-t">
+    <footer className="bg-white text-gray-700 relative overflow-hidden border-t border-gray-200">
       <div className="relative z-10">
         {/* Main Footer Content */}
-        <div className="pt-16 pb-8 px-6 lg:px-12">
+        <div className="pt-16 pb-10 px-6 lg:px-12">
           <div className="container mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-              {/* Company Info */}
-              <div className="lg:col-span-2">
-                <div className="flex items-center gap-3 mb-3">
-                  <div>
-                    <Image
-                      src="/images/new/logo/BLACKBOXINC-Shop.png"
-                      alt="Logo"
-                      width={75}
-                      height={40}
-                    />
-                  </div>
-                </div>
-
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                  Perawatan kulit alami dengan bahan berkualitas tinggi untuk
-                  menjaga kelembapan, mencerahkan, dan menutrisi kulit wajah.
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10">
+              
+              {/* Kolom 1: Company Info & Values (lg:col-span-2) */}
+              <div className="col-span-2 lg:col-span-2">
+                <BrandLogo />
+                
+                <p className="text-sm text-gray-700 leading-relaxed mt-4 mb-4 max-w-sm">
+                  Curating timeless fashion pieces with uncompromising quality and sleek, modern design. Elevate your wardrobe with Blackboxinc.
                 </p>
 
-                {/* Values */}
-                <div className="space-y-3 mb-3 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-[#E53935]" />
-                    <span>Aman & Tersertifikasi</span>
+                {/* Values - Minimalist B&W */}
+                <div className="space-y-3 mb-6 text-sm">
+                  <div className="flex items-center gap-2 font-medium text-black">
+                    <ShieldCheck className="w-4 h-4 text-black" />
+                    <span>Quality Guaranteed</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-[#E53935]" />
-                    <span>Dermatology Tested</span>
+                  <div className="flex items-center gap-2 font-medium text-black">
+                    <Diamond className="w-4 h-4 text-black" />
+                    <span>Exclusive Designs</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Heart className="w-4 h-4 text-[#E53935]" />
-                    <span>Trusted by Thousands</span>
+                  <div className="flex items-center gap-2 font-medium text-black">
+                    <Heart className="w-4 h-4 text-black" />
+                    <span>Trusted by Clients</span>
                   </div>
                 </div>
 
                 {/* Contact Info */}
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-4.5 h-4.5 text-[#E53935]" />
+                <div className="space-y-3 text-sm border-t border-gray-100 pt-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-4 h-4 mt-1 text-black flex-shrink-0" />
                     <span>
-                      Jalan raya Lohbener depan kantor PEMBAYARAN PDAM LOHBENER
-                      celeng RT 18/RW 05,BLACKBOXINC Shop kecamatan Lohbener
-                      kabupaten Indramayu
+                      Jalan raya Lohbener depan kantor PEMBAYARAN PDAM LOHBENER celeng RT 18/RW 05, Lohbener, Indramayu
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-[#E53935]" />
+                    <Phone className="w-4 h-4 text-black" />
                     <span>+62 877 2666 6394</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-[#E53935]" />
-                    <span>BLACKBOXINCShop@gmail.com</span>
+                    <Mail className="w-4 h-4 text-black" />
+                    <span>hello@blackboxinc.com</span>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Links */}
-              <div>
-                <h4 className="text-lg font-semibold mb-6 text-gray-800">
-                  Menu Utama
+              {/* Kolom 2: Quick Links */}
+              <div className="col-span-1">
+                <h4 className="text-base font-extrabold mb-4 text-black uppercase tracking-wider">
+                  Quick Links
                 </h4>
-                <ul className="space-y-3">
+                <ul className="space-y-3 text-sm">
                   {quickLinks.map((link, index) => (
                     <li key={index}>
-                      <a
+                      <Link
                         href={link.href}
-                        className="text-gray-600 hover:text-[#E53935] transition-colors flex items-center group"
+                        className="text-gray-700 hover:text-black transition-colors relative group"
                       >
-                        <ArrowRight className="w-3 h-3 mr-2 opacity-0 group-hover:opacity-100 transition-opacity text-[#E53935]" />
-                        <span className="group-hover:translate-x-1 transition-transform">
+                         <span className="group-hover:translate-x-1 transition-transform inline-block">
                           {link.name}
                         </span>
-                      </a>
+                        <span className="absolute left-0 bottom-0 h-[1px] w-0 bg-black transition-all duration-300 group-hover:w-full" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              {/* Kolom 3: Customer Service Links */}
+               <div className="col-span-1">
+                <h4 className="text-base font-extrabold mb-4 text-black uppercase tracking-wider">
+                  Support
+                </h4>
+                <ul className="space-y-3 text-sm">
+                  {serviceLinks.map((link, index) => (
+                    <li key={index}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-700 hover:text-black transition-colors relative group"
+                      >
+                         <span className="group-hover:translate-x-1 transition-transform inline-block">
+                          {link.name}
+                        </span>
+                        <span className="absolute left-0 bottom-0 h-[1px] w-0 bg-black transition-all duration-300 group-hover:w-full" />
+                      </Link>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* FAQ */}
-              <div>
-                <h4 className="text-lg font-semibold mb-6 text-gray-800">
+
+              {/* Kolom 4: FAQ (Accordion) */}
+              <div className="col-span-2 md:col-span-4 lg:col-span-1">
+                <h4 className="text-base font-extrabold mb-4 text-black uppercase tracking-wider">
                   FAQ
                 </h4>
-                <div className="space-y-4 mb-4">
+                <div className="space-y-3 mb-4">
                   {faqs.map((faq, i) => (
                     <div
                       key={i}
-                      className="bg-white border border-gray-200 rounded-2xl overflow-hidden"
+                      className="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden"
                     >
                       <button
-                        className="w-full flex justify-between items-center text-left p-4 text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() =>
-                          setActiveIndex(activeIndex === i ? null : i)
-                        }
+                        className="w-full flex justify-between items-center text-left p-3 text-gray-700 hover:bg-gray-100 transition-colors"
+                        onClick={() => toggleAccordion(i)}
                       >
-                        <span className="font-medium text-sm pr-2">
+                        <span className="font-medium text-sm pr-2 text-black">
                           {faq.question}
                         </span>
                         <div className="flex-shrink-0">
                           {activeIndex === i ? (
-                            <ChevronUp className="w-4 h-4 text-[#E53935]" />
+                            <ChevronUp className="w-4 h-4 text-black" />
                           ) : (
-                            <ChevronDown className="w-4 h-4 text-[#E53935]" />
+                            <ChevronDown className="w-4 h-4 text-black" />
                           )}
                         </div>
                       </button>
                       {activeIndex === i && (
-                        <div className="px-4 pb-4">
+                        <div className="px-3 pb-3 border-t border-gray-100">
                           <p className="text-sm text-gray-600 leading-relaxed">
                             {faq.answer}
                           </p>
@@ -170,9 +212,10 @@ export default function Footer() {
                   <button
                     onClick={goTofaqPage}
                     type="button"
-                    className="w-full bg-[#E53935] text-white py-3 rounded-2xl font-semibold hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
+                    // CTA Button: White/Bordered
+                    className="w-full border border-black text-black py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
                   >
-                    Punya Pertanyaan Lain?
+                    View All FAQs
                   </button>
                 </div>
               </div>
@@ -181,41 +224,46 @@ export default function Footer() {
         </div>
 
         {/* Social Media & Bottom Bar */}
-        <div className="border-t border-gray-200 bg-gray-100">
+        <div className="border-t border-gray-200 bg-gray-50">
           <div className="container mx-auto px-6 lg:px-12 py-6">
-            <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
-              <p>
-                © {new Date().getFullYear()}BLACKBOXINC Shop. All rights
-                reserved.
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+              
+              {/* Copyright */}
+              <p className="text-sm text-gray-600">
+                © {new Date().getFullYear()} **BLACKBOXINC**. All rights reserved.
               </p>
 
               {/* Social Media */}
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <p className="text-gray-600 text-sm">Ikuti kami di:</p>
-                <div className="flex gap-4">
+              <div className="flex items-center gap-6">
+                <p className="text-gray-600 text-sm hidden sm:block">Follow Us:</p>
+                <div className="flex gap-3">
+                  {/* Social Icons: B&W Style */}
                   <a
-                    className="w-10 h-10 bg-white border border-gray-200 rounded-2xl flex items-center justify-center text-gray-600 hover:bg-pink-500 hover:text-white"
+                    className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors"
                     href="https://www.instagram.com/BLACKBOXINC_Shop?igsh=MTN4MTE0anA2aXB4aA=="
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Instagram"
                   >
-                    <FaInstagram size={18} />
+                    <FaInstagram size={16} />
                   </a>
                   <a
-                    className="w-10 h-10 bg-white border border-gray-200 rounded-2xl flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white"
+                    className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors"
                     href="https://www.facebook.com/share/19mYKsot3N/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Facebook"
                   >
-                    <FaFacebookF size={18} />
+                    <FaFacebookF size={16} />
                   </a>
                   <a
-                    className="w-10 h-10 bg-white border border-gray-200 rounded-2xl flex items-center justify-center text-gray-600 hover:bg-green-500 hover:text-white"
+                    className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors"
                     href="https://wa.me/6287726666394"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="WhatsApp"
                   >
-                    <FaWhatsapp size={18} />
+                    <FaWhatsapp size={16} />
                   </a>
                 </div>
               </div>

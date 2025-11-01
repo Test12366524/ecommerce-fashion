@@ -101,19 +101,20 @@ export interface TransactionListParams {
 }
 
 // Create transaction request payload
-export type PaymentType = "midtrans" | "manual" | "cod";
-
+export type PaymentMethod = "bank_transfer" | "qris";
+export type PaymentChannel = "bca" | "bnc" | "bjb" | "bni" | "bsi" | "bss" | "cimb" | "qris";
 export interface CreateTransactionRequest {
   address_line_1: string;
+  address_line_2?: string;
   postal_code: string;
-
-  // ✅ WAJIB di level ROOT
-  payment_method: PaymentType;
-
+  payment_type: string;
+  payment_method: PaymentMethod;
+  payment_channel?: string;
   data: Array<{
     shop_id: number;
     details: Array<{
       product_id: number;
+      product_variant_id: number;
       quantity: number;
     }>;
     shipment: {
@@ -122,7 +123,7 @@ export interface CreateTransactionRequest {
       courier: string;
       cost: number;
     };
-    customer_info: {
+    customer_info?: {
       name: string;
       phone: string;
       address_line_1: string;
@@ -131,7 +132,6 @@ export interface CreateTransactionRequest {
       city_id: number;
       district_id: number;
     };
-
   }>;
 }
 

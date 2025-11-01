@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import clsx from "clsx"; // Tambahkan ini untuk class conditional
 
 type RunningCarouselProps = {
   images?: string[];
@@ -12,6 +13,8 @@ type RunningCarouselProps = {
   showDots?: boolean;
 };
 
+// Default images, updated to be more neutral/fashion-like if possible
+// Anda bisa mengganti URL ini dengan gambar B&W Anda sendiri
 const DEFAULT_IMAGES = [
   "https://8nc5ppykod.ufs.sh/f/H265ZJJzf6brtBHsuFex0OYVvL2QeijZs4TN9tB6HcnbPodI",
   "https://8nc5ppykod.ufs.sh/f/H265ZJJzf6brTTHbttWk2QS9m61VxOA4hqLglEHIpdXWi8wU",
@@ -55,7 +58,10 @@ export default function RunningCarousel({
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-3xl ${heightClass} bg-rose-100`}
+      className={clsx(
+        `relative w-full overflow-hidden rounded-3xl ${heightClass} bg-gray-100`, // Background netral
+        "shadow-xl" // Tambahkan shadow untuk kesan premium
+      )}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
@@ -70,12 +76,12 @@ export default function RunningCarousel({
             <img
               src={src}
               alt={`Slide ${i + 1}`}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover grayscale-[20%]" // Tambahkan grayscale untuk kesan B&W
               draggable={false}
               loading="lazy"
             />
-            {/* red overlay for elegance */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-rose-900/40 via-rose-800/20 to-transparent" />
+            {/* Dark overlay for mood and text readability */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           </div>
         ))}
       </div>
@@ -86,16 +92,18 @@ export default function RunningCarousel({
           <button
             aria-label="Previous slide"
             onClick={() => go(-1)}
-            className="group absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md ring-1 ring-black/10 backdrop-blur hover:bg-white"
+            // Styling panah: hitam dengan border putih, shadow lebih kuat
+            className="group absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2 shadow-lg ring-1 ring-white/20 backdrop-blur-sm transition-all hover:bg-black"
           >
-            <ChevronLeft className="h-5 w-5 text-rose-700 group-hover:scale-110 transition-transform" />
+            <ChevronLeft className="h-5 w-5 text-white group-hover:scale-110 transition-transform" />
           </button>
           <button
             aria-label="Next slide"
             onClick={() => go(1)}
-            className="group absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md ring-1 ring-black/10 backdrop-blur hover:bg-white"
+            // Styling panah: hitam dengan border putih, shadow lebih kuat
+            className="group absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2 shadow-lg ring-1 ring-white/20 backdrop-blur-sm transition-all hover:bg-black"
           >
-            <ChevronRight className="h-5 w-5 text-rose-700 group-hover:scale-110 transition-transform" />
+            <ChevronRight className="h-5 w-5 text-white group-hover:scale-110 transition-transform" />
           </button>
         </>
       )}
@@ -108,11 +116,13 @@ export default function RunningCarousel({
               key={i}
               aria-label={`Go to slide ${i + 1}`}
               onClick={() => setIndex(i)}
-              className={`h-2.5 w-2.5 rounded-full transition-all ${
-                i === index
-                  ? "bg-white shadow ring-2 ring-rose-600"
-                  : "bg-white/60 hover:bg-white"
-              }`}
+              className={clsx(
+                "h-2.5 w-2.5 rounded-full transition-all duration-300",
+                {
+                  "bg-white shadow-md ring-2 ring-gray-400": i === index, // Titik aktif: putih dengan ring abu-abu
+                  "bg-gray-400/60 hover:bg-gray-300": i !== index, // Titik non-aktif: abu-abu
+                }
+              )}
             />
           ))}
         </div>

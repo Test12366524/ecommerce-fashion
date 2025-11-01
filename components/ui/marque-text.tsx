@@ -1,3 +1,6 @@
+// components/sections/MarqueeBanner.tsx
+"use client";
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Megaphone } from "lucide-react";
 
@@ -26,7 +29,7 @@ export function MarqueeBanner({
   const [hovered, setHovered] = useState(false);
   const [contentWidth, setContentWidth] = useState<number>(0);
 
-  // Normalize message into items (split to chips if a single string)
+  // Normalize message into items
   const items = useMemo(() => {
     if (Array.isArray(message))
       return message.filter(Boolean).map((m) => m.trim());
@@ -37,7 +40,7 @@ export function MarqueeBanner({
     return parts.length ? parts : [message];
   }, [message]);
 
-  // Chip & container sizing — bigger text, slightly smaller height
+  // Chip & container sizing (sama seperti sebelumnya, hanya styling yang berubah)
   const sizing = useMemo(() => {
     switch (size) {
       case "sm":
@@ -45,7 +48,7 @@ export function MarqueeBanner({
           containerPadX: "px-4",
           containerPadY: "py-1.5",
           trackHeight: "h-8",
-          chipText: "text-base font-semibold", // bigger
+          chipText: "text-base font-semibold",
           chipPad: "px-2.5 py-0.5",
           gap: "gap-3",
           iconSize: "h-4 w-4",
@@ -55,8 +58,8 @@ export function MarqueeBanner({
         return {
           containerPadX: "px-6",
           containerPadY: "py-2.5",
-          trackHeight: "h-12", // smaller than before
-          chipText: "text-xl", // bigger
+          trackHeight: "h-12",
+          chipText: "text-xl",
           chipPad: "px-4 py-1",
           gap: "gap-5",
           iconSize: "h-6 w-6",
@@ -66,8 +69,8 @@ export function MarqueeBanner({
         return {
           containerPadX: "px-5",
           containerPadY: "py-1.5",
-          trackHeight: "h-9", // slightly smaller
-          chipText: "text-lg", // bigger
+          trackHeight: "h-9",
+          chipText: "text-lg",
           chipPad: "px-3 py-0.5",
           gap: "gap-4",
           iconSize: "h-5 w-5",
@@ -76,13 +79,13 @@ export function MarqueeBanner({
     }
   }, [size]);
 
-  // Measure content width for a perfect, gapless loop
+  // Measure content width (logic remains the same)
   useEffect(() => {
     const recalc = () => {
       const container = containerRef.current;
       const text = textRef.current;
       if (!container || !text) return;
-      const width = text.scrollWidth; // width of one sequence
+      const width = text.scrollWidth;
       setContentWidth(width);
       const pxPerSec = Math.max(24, speed);
       const d = Math.max(6, Math.round(width / pxPerSec));
@@ -111,21 +114,19 @@ export function MarqueeBanner({
       onMouseEnter={() => pauseOnHover && setHovered(true)}
       onMouseLeave={() => pauseOnHover && setHovered(false)}
       className={[
-        "relative overflow-hidden text-white shadow-xl",
-        // Premium red gradient background
-        "bg-gradient-to-br from-red-600 via-red-600 to-red-700",
-        // Soft outer glow
-        "ring-1 ring-white/10",
+        "relative overflow-hidden shadow-xl",
+        // Black & White Theme: Black solid background
+        "bg-black text-white",
+        // No heavy gradient, just subtle ring
+        "ring-1 ring-gray-700", 
         className,
       ].join(" ")}
       aria-live="polite"
     >
-      {/* Animated sheen overlay */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.18]">
-        <div className="absolute -inset-x-1/3 -inset-y-1/2 rotate-12 bg-[radial-gradient(closest-side,white,transparent_70%)] blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,.25),transparent)] animate-[sheen_7s_linear_infinite]" />
-        {/* Subtle pattern */}
-        <div className="absolute inset-0 mix-blend-soft-light opacity-20 bg-[repeating-linear-gradient(135deg,rgba(255,255,255,.12)_0px,rgba(255,255,255,.12)_1px,transparent_1px,transparent_10px)]" />
+      {/* Animated sheen overlay (Reduced complexity for minimal look) */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.10]">
+        {/* Subtle shimmer effect */}
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,.15),transparent)] animate-[sheen_7s_linear_infinite]" />
       </div>
 
       {/* Header strip */}
@@ -133,26 +134,30 @@ export function MarqueeBanner({
         className={[
           "relative z-10 flex items-center gap-2 px-4 text-sm/6 opacity-90 select-none",
           sizing.headerPadTop,
+          "text-white", // Ensure header text is white
         ].join(" ")}
       >
-        <span className="relative inline-flex h-2 w-2 overflow-hidden rounded-full bg-emerald-300">
-          <span className="absolute inset-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-emerald-200" />
+        {/* Status indicator (use gray/white dot) */}
+        <span className="relative inline-flex h-2 w-2 overflow-hidden rounded-full bg-white/70">
+          <span className="absolute inset-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-white/50" />
         </span>
-        <Megaphone className={`${sizing.iconSize}`} aria-hidden />
-        <span className="font-medium tracking-wide">Pengumuman</span>
+        <Megaphone className={`${sizing.iconSize} text-white`} aria-hidden />
+        <span className="font-medium tracking-wide uppercase">Announcement</span>
         {cta ? (
           cta.href ? (
             <a
               href={cta.href}
               onClick={cta.onClick}
-              className="ml-auto inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur hover:bg-white/25 transition-colors"
+              // CTA Button: White text, minimal background
+              className="ml-auto inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm hover:bg-white/20 transition-colors uppercase"
             >
               {cta.label}
             </a>
           ) : (
             <button
               onClick={cta.onClick}
-              className="ml-auto inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur hover:bg-white/25 transition-colors"
+              // CTA Button: White text, minimal background
+              className="ml-auto inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm hover:bg-white/20 transition-colors uppercase"
             >
               {cta.label}
             </button>
@@ -162,9 +167,9 @@ export function MarqueeBanner({
 
       {/* Marquee track */}
       <div className="relative">
-        {/* Fading edges for elegance */}
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-red-700 to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-red-700 to-transparent" />
+        {/* Fading edges: use the darker background color (black) */}
+        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-black to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-black to-transparent" />
 
         <div
           className={[
@@ -192,9 +197,10 @@ export function MarqueeBanner({
                   <span
                     key={`a-${i}`}
                     className={[
-                      "chip inline-flex items-center rounded-full border border-white/15 bg-white/10/50 backdrop-blur-sm shadow-sm",
+                      "chip inline-flex items-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm shadow-sm",
                       sizing.chipPad,
                       sizing.chipText,
+                      "font-medium", // Slightly softer text weight
                     ].join(" ")}
                   >
                     {it}
@@ -210,9 +216,10 @@ export function MarqueeBanner({
                   <span
                     key={`b-${i}`}
                     className={[
-                      "chip inline-flex items-center rounded-full border border-white/15 bg-white/10/50 backdrop-blur-sm shadow-sm",
+                      "chip inline-flex items-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm shadow-sm",
                       sizing.chipPad,
                       sizing.chipText,
+                      "font-medium",
                     ].join(" ")}
                   >
                     {it}

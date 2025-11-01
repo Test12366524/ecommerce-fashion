@@ -81,15 +81,12 @@ export default function ProductPage() {
       }
 
       payload.append("price", String(form.price ?? 0));
-      const durationValue = isJasaMerk
-        ? form.duration ?? 0
-        : form.duration ?? 1;
-      payload.append("duration", String(durationValue));
       payload.append("weight", String(form.weight ?? 0));
       payload.append("length", String(form.length ?? 0));
       payload.append("width", String(form.width ?? 0));
       payload.append("height", String(form.height ?? 0));
       payload.append("diameter", String(form.diameter ?? 0));
+      payload.append("stock", String(form.stock ?? 0));
 
       // === IMAGE HANDLING ===
       // Kirim HANYA file baru. Jangan kirim string URL lama.
@@ -194,8 +191,6 @@ export default function ProductPage() {
                 <th className="px-4 py-2">Kategori</th>
                 <th className="px-4 py-2">Merk</th>
                 <th className="px-4 py-2">Produk</th>
-                <th className="px-4 py-2">Harga</th>
-                <th className="px-4 py-2">Stok</th>
                 <th className="px-4 py-2">Rating</th>
                 <th className="px-4 py-2 whitespace-nowrap">T. Views</th>
                 <th className="px-4 py-2">Status</th>
@@ -241,12 +236,6 @@ export default function ProductPage() {
                       {item.merk_name}
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">{item.name}</td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      {formatRupiahWithRp(item.price)}
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      {item.duration}
-                    </td>
                     <td className="px-4 py-2 whitespace-nowrap">
                       {item.rating}
                     </td>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import clsx from "clsx";
 
 const IMG =
   "https://i.pinimg.com/1200x/dc/28/77/dc2877f08ba923ba34c8fa70bae94128.jpg";
@@ -18,57 +19,72 @@ const CURRENCY = (n: number) =>
 
 const SAMPLE: Product[] = Array.from({ length: 6 }).map((_, i) => ({
   id: String(i + 1),
-  name: `New Arrival ${i + 1}`,
-  price: 249000 + i * 10000,
+  name: `Essential T-Shirt ${i + 1}`,
+  price: 899000 + i * 50000,
   href: `/product/${i + 1}`,
   image: IMG,
 }));
 
 export default function NewArrival({ items = SAMPLE }: { items?: Product[] }) {
   return (
-    <section className="mx-auto  px-4 py-10 md:py-14">
-      <div className="flex items-end justify-between">
+    <section className="mx-auto container md:px-4 py-16 md:py-20 bg-white">
+      {/* Header Section: Black & White Styling */}
+      <div className="flex items-end justify-between border-b border-gray-200 pb-4">
         <div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
-            New Arrival
+          <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+            New Arrivals
           </h2>
-          <p className="text-sm text-gray-500">
-            Rilis terbaru — jangan sampai kehabisan.
+          <p className="text-sm text-gray-600 mt-1">
+            The latest collection, crafted for you.
           </p>
         </div>
+        
+        {/* CTA Button: Black Solid */}
         <Link
           href="/product?sort=new"
-          className="rounded-full bg-rose-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow hover:bg-rose-700"
+          className="rounded-lg bg-black px-5 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-md transition hover:bg-gray-800 border-2 border-black"
         >
-          Lihat Semua
+          Shop All
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((p) => (
           <Link
             key={p.id}
             href={p.href}
-            className="group overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-sm ring-1 ring-rose-100 transition hover:shadow-md"
+            // Card Style: Minimalis, tanpa border tebal/shadow berlebihan. Fokus pada hover state.
+            className="group block transition-all duration-300 relative"
           >
-            <div className="relative">
+            {/* Image Container */}
+            <div className="relative overflow-hidden aspect-[3/4] bg-gray-50 border border-gray-100">
               <img
                 src={p.image ?? IMG}
                 alt={p.name}
-                className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                // Styling gambar: grayscale tipis, scale-up on hover
+                className="h-full w-full object-cover grayscale-[10%] transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
               />
-              <span className="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-700 ring-1 ring-rose-200">
+              
+              {/* 'New' Tag: Black & White Styling */}
+              <span className="absolute left-0 top-0 inline-flex items-center rounded-br-lg bg-black px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
                 New
               </span>
             </div>
-            <div className="p-4">
-              <h3 className="line-clamp-1 font-semibold text-gray-900">
+            
+            {/* Product Details */}
+            <div className="mt-4 flex flex-col">
+              <h3 className="line-clamp-1 text-base font-semibold text-black uppercase tracking-wide">
                 {p.name}
               </h3>
-              <p className="mt-1 text-rose-700 font-bold">
+              {/* Price: Black and Bold */}
+              <p className="mt-1 text-lg font-extrabold text-black">
                 {CURRENCY(p.price)}
               </p>
             </div>
+            
+             {/* Subtle Underline Hover Effect */}
+             <span className="absolute bottom-0 left-0 h-[1px] w-full bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </Link>
         ))}
       </div>
