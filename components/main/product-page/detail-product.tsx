@@ -25,6 +25,8 @@ ProductDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [showDetails, setShowDetails] = useState(false);
 
+  const maxQty = product?.duration ?? product?.stock ?? 0;
+
   useEffect(() => {
     if (product?.image) {
       setActiveImage(product.image as string);
@@ -63,7 +65,7 @@ ProductDetailProps) {
   const hasMultipleImages = allImages.length > 1;
 
   const handleIncreaseQuantity = () => {
-    setQuantity((prev) => prev + 1);
+    setQuantity((prev) => Math.min(maxQty, prev + 1));
   };
 
   const handleDecreaseQuantity = () => {
@@ -74,7 +76,7 @@ ProductDetailProps) {
   const handleAddToCart = () => {
     // Add the product to cart multiple times based on quantity
     for (let i = 0; i < quantity; i++) {
-      addItem(product);
+      addItem(product, product.product_variant_id ?? 0);
     }
 
     // Open the cart sidebar to show the added items
@@ -228,7 +230,7 @@ ProductDetailProps) {
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Stok tersedia:</span>
               <span className="text-sm font-medium text-green-600">
-                {product.duration} unit
+                {maxQty} unit
               </span>
             </div>
 
@@ -261,7 +263,7 @@ ProductDetailProps) {
                     variant="ghost"
                     className="rounded-full w-10 h-10 p-0 hover:bg-gray-100"
                     onClick={handleIncreaseQuantity}
-                    disabled={quantity >= product.duration} // Prevent exceeding duration
+                    disabled={quantity >= maxQty} // Prevent exceeding duration
                   >
                     +
                   </Button>
@@ -282,10 +284,10 @@ ProductDetailProps) {
               <div className="flex items-center gap-4">
                 <Button
                   onClick={handleAddToCart}
-                  disabled={product.duration === 0}
+                  disabled={maxQty === 0}
                   className="flex-1 bg-green-900 text-white hover:bg-green-800 rounded-full py-6 text-base font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  {product.duration === 0
+                  {maxQty === 0
                     ? "STOK HABIS"
                     : `TAMBAH KE KERANJANG (${quantity})`}
                 </Button>

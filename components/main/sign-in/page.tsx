@@ -26,10 +26,21 @@ import { Button } from "@/components/ui/button"; // Asumsi Button sudah B&W
 import clsx from "clsx";
 
 // --- Mocking Unused Hooks for UI isolation ---
-const useRegisterMutation = () => [
-  () => new Promise((resolve) => setTimeout(resolve, 1000)), // mock function
-  { isLoading: false },
-] as const;
+type RegisterSuccess = { message?: string };
+type TriggerReturn<T> = Promise<T> & { unwrap: () => Promise<T> };
+
+const useRegisterMutation = () => {
+  const trigger = (
+    payload: RegisterPayload
+  ): TriggerReturn<RegisterSuccess> => {
+    const p = new Promise<RegisterSuccess>((resolve) => {
+      setTimeout(() => resolve({ message: "ok" }), 1000);
+    }) as TriggerReturn<RegisterSuccess>;
+    p.unwrap = () => p;
+    return p;
+  };
+  return [trigger, { isLoading: false }] as const;
+};
 // --- End Mock ---
 
 interface LoginFormData {
@@ -176,15 +187,13 @@ export default function LoginPage() {
     };
 
     try {
-      // Mocking the mutation call
-      await (registerMutation as any)(payload).unwrap(); 
+      await registerMutation(payload).unwrap(); // ✔ tanpa any
       setSuccessMsg("Registrasi berhasil! Silakan masuk.");
       setLoginData((p) => ({ ...p, email: registerData.email }));
       setIsLogin(true);
-    } catch (err) {
-      const msg =
-        (err as { data?: { message?: string } }).data?.message ??
-        "Registrasi gagal. Coba lagi.";
+    } catch (err: unknown) {
+      const apiErr = err as { data?: { message?: string } };
+      const msg = apiErr?.data?.message ?? "Registrasi gagal. Coba lagi.";
       setErrors([msg]);
     }
   };
@@ -294,7 +303,7 @@ export default function LoginPage() {
               Forgot Password?
             </h2>
             <p className="text-gray-700">
-              Enter your email and we'll guide you through the process.
+              {`Enter your email and we'll guide you through the process.`}
             </p>
           </div>
 

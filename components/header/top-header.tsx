@@ -3,14 +3,20 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect, useMemo, useRef, FormEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  FormEvent,
+  Suspense,
+} from "react";
 import { Menu, X, ShoppingCart, User, Globe, Search } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation"; // Import useSearchParams
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import useCart from "@/hooks/use-cart";
-import Image from "next/image";
-import { MarqueeBanner } from "../ui/marque-text"; // Pastikan path ini benar
-import clsx from "clsx"; // Tambahkan clsx
+import { MarqueeBanner } from "../ui/marque-text";
+import clsx from "clsx";
 
 // --- Type Definitions ---
 interface TranslationContent {
@@ -28,6 +34,19 @@ interface TranslationContent {
 interface Translations {
   id: TranslationContent;
   en: TranslationContent;
+}
+
+// --- Child pembaca search params (dibungkus Suspense) ---
+function SearchParamsReader({
+  onChange,
+}: {
+  onChange: (sp: URLSearchParams) => void;
+}) {
+  const sp = useSearchParams();
+  useEffect(() => {
+    onChange(sp);
+  }, [sp, onChange]);
+  return null;
 }
 
 // --- Search Engine UI (Reusable Component) ---
@@ -77,9 +96,8 @@ function SearchEngine({
     onNavigate?.(q);
     saveRecent(q);
     setOpen(false);
-    onClose?.(); 
-    // Menggunakan query param 'q' untuk konsistensi dengan URL halaman produk
-    router.push(`/product?q=${encodeURIComponent(q)}`); 
+    onClose?.();
+    router.push(`/product?q=${encodeURIComponent(q)}`);
   };
 
   useEffect(() => {
@@ -120,13 +138,7 @@ function SearchEngine({
   }, [recent, query]);
 
   const trending = useMemo(
-    () => [
-      "denim",
-      "t-shirt",
-      "hoodie",
-      "sneakers",
-      "accessories",
-    ],
+    () => ["denim", "t-shirt", "hoodie", "sneakers", "accessories"],
     []
   );
 
@@ -171,7 +183,6 @@ function SearchEngine({
         </kbd>
       </form>
 
-      {/* Suggestion panel */}
       {open && (
         <div className="absolute left-0 right-0 z-[60] mt-2 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl">
           {query.length >= 3 ? (
@@ -243,7 +254,10 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const pathname = usePathname();
-  const searchParams = useSearchParams(); // Dapatkan search params
+  // ← pakai state, akan diisi oleh SearchParamsReader dalam Suspense
+  const [searchParams, setSearchParams] = useState<URLSearchParams | null>(
+    null
+  );
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -276,49 +290,42 @@ export default function Header() {
 
   const t = translations[language];
 
-  // Logic untuk menentukan tautan mana yang aktif, termasuk cek query 'q'
+  // Aktif link (memperhitungkan q dari search params)
   const isMenuLinkActive = (href: string) => {
     const currentPath = pathname;
-    const currentQueryQ = searchParams.get('q');
-    
-    // 1. Case Home Page
+    const currentQueryQ = searchParams?.get("q") ?? null;
+
     if (href === "/") return currentPath === "/";
 
-    // 2. Case Standard Link Match (e.g., /how-to-order)
-    if (!href.includes('?')) {
-        return currentPath.startsWith(href);
+    if (!href.includes("?")) {
+      return currentPath.startsWith(href);
     }
-    
-    // 3. Case Product Page with Query (e.g., /product?q=new-arrivals)
-    if (currentPath === '/product' && href.startsWith('/product?')) {
-        // Ambil query value dari href item menu
-        const url = new URL(`http://dummy.com${href}`);
-        const menuQueryQ = url.searchParams.get('q');
-        
-        // Cek jika query parameter 'q' cocok
-        if (menuQueryQ) {
-            return currentQueryQ === menuQueryQ;
-        } else {
-            // Jika link menu adalah /product tanpa q, tapi sedang di /product,
-            // aktifkan hanya jika tidak ada query parameter q lain yang aktif
-            return currentQueryQ === null;
-        }
+
+    if (currentPath === "/product" && href.startsWith("/product?")) {
+      const url = new URL(`http://dummy.com${href}`);
+      const menuQueryQ = url.searchParams.get("q");
+      if (menuQueryQ) {
+        return currentQueryQ === menuQueryQ;
+      } else {
+        return currentQueryQ === null;
+      }
     }
-    
-    // Fallback untuk /product tanpa query (semua produk)
-    if (href === "/product" && currentPath === "/product" && currentQueryQ === null) {
-        return true;
+
+    if (
+      href === "/product" &&
+      currentPath === "/product" &&
+      currentQueryQ === null
+    ) {
+      return true;
     }
 
     return false;
   };
 
-
-  // Primary Nav Items - Updated to reflect the filtering logic
   const primaryMenuItems = useMemo(
     () => [
       { name: t.home, href: "/" },
-      { name: t.products, href: "/product" }, // Default product listing
+      { name: t.products, href: "/product" },
       { name: t.service, href: "/product?q=new-arrivals" },
       { name: t.testimonials, href: "/product?q=best-seller" },
       { name: t.howToOrder, href: "/how-to-order" },
@@ -326,7 +333,6 @@ export default function Header() {
     [t]
   );
 
-  // Secondary/Mobile Menu Items - Include all possible routes
   const mobileMenuItems = useMemo(
     () => [
       { name: t.home, href: "/" },
@@ -339,12 +345,11 @@ export default function Header() {
   );
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0); 
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Recalc nav height (logic unchanged)
   useEffect(() => {
     const recalc = () =>
       setNavHeight(navRef.current?.getBoundingClientRect().height ?? 0);
@@ -357,12 +362,12 @@ export default function Header() {
       ro.disconnect();
       window.removeEventListener("resize", onResize);
     };
-  }, []); 
+  }, []);
 
-  // Close search on route change or ESC (logic unchanged)
+  // Tutup panel saat path atau query berubah
   useEffect(() => {
     setIsSearchOpen(false);
-    setIsMobileMenuOpen(false); 
+    setIsMobileMenuOpen(false);
   }, [pathname, searchParams]);
 
   useEffect(() => {
@@ -406,16 +411,20 @@ export default function Header() {
 
   return (
     <>
+      {/* Suspense wrapper untuk useSearchParams */}
+      <Suspense fallback={null}>
+        <SearchParamsReader onChange={setSearchParams} />
+      </Suspense>
+
       <nav
         ref={navRef}
         className={clsx(
-            "fixed top-0 w-full z-50 transition-all duration-300",
-            isScrolled
+          "fixed top-0 w-full z-50 transition-all duration-300",
+          isScrolled
             ? "bg-white/95 backdrop-blur-lg shadow-md border-b border-gray-100"
             : "bg-white/95 backdrop-blur-sm"
         )}
       >
-        {/* Marquee Banner - Thin, minimalist (Assuming this path is fixed) */}
         <MarqueeBanner
           message={
             "DISKON AKHIR TAHUN • GRATIS ONGKIR SELURUH INDONESIA • KATALOG BARU RILIS HARI INI"
@@ -426,12 +435,9 @@ export default function Header() {
           className="bg-black text-white py-1"
         />
 
-        {/* Primary Header Row (Mobile & Desktop) */}
         <div className="container mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between h-16 md:h-20 relative">
-            {/* Left Section: Mobile (menu/search), Desktop (search/language) */}
             <div className="flex items-center gap-2 md:gap-1">
-              {/* Mobile: Menu & Search */}
               <button
                 onClick={toggleMobileMenu}
                 className="p-2 rounded-full hover:bg-gray-100 transition-all md:hidden"
@@ -452,7 +458,6 @@ export default function Header() {
               >
                 <Search className="w-5 h-5 text-black" />
               </button>
-              {/* Desktop: Search & Language */}
               <button
                 onClick={() => setIsSearchOpen((v) => !v)}
                 className="p-2 rounded-full hover:bg-gray-100 transition-all hidden md:block"
@@ -475,7 +480,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Center Brand: Always centered on desktop */}
             <div className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center justify-center w-fit">
               <Link
                 href="/"
@@ -490,9 +494,7 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* Right Section: Profile & Cart (Desktop only) */}
             <div className="flex items-center gap-1 md:gap-1">
-              {/* User */}
               <button
                 onClick={handleUserClick}
                 className="p-2 rounded-full hover:bg-gray-100 transition-all"
@@ -500,7 +502,6 @@ export default function Header() {
               >
                 <User className="w-5 h-5 text-black" />
               </button>
-              {/* Cart */}
               <button
                 onClick={handleCartClick}
                 className="relative p-2 rounded-full hover:bg-gray-100 transition-all"
@@ -517,7 +518,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Desktop Nav Links (Hidden on Mobile) */}
         <div className="hidden md:block border-t border-gray-100">
           <div className="container mx-auto px-4 lg:px-6">
             <div className="flex h-12 items-center justify-center overflow-x-auto">
@@ -534,7 +534,6 @@ export default function Header() {
                   >
                     <span>{item.name}</span>
                     {isMenuLinkActive(item.href) && (
-                      // Underline for active link - Black and thin
                       <span className="pointer-events-none absolute -bottom-[1px] left-0 h-[1.5px] w-full bg-black transition-all" />
                     )}
                   </Link>
@@ -545,16 +544,13 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Floating search panel BELOW the header */}
       {isSearchOpen && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
             onClick={() => setIsSearchOpen(false)}
             aria-hidden
           />
-          {/* Panel */}
           <div
             id="header-search-panel"
             className="fixed left-0 right-0 z-50 animate-[slideDown_0.2s_ease-out]"
@@ -572,7 +568,6 @@ export default function Header() {
         </>
       )}
 
-      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
           className={`fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 ${
@@ -586,7 +581,6 @@ export default function Header() {
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Mobile Header (Search and Close) */}
             <div className="p-4 border-b border-gray-100 sticky top-0 bg-white z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex flex-col">
@@ -604,7 +598,6 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* Mobile Search (Always visible in menu) */}
               <SearchEngine
                 className="w-full"
                 placeholder="Cari di Blackboxinc…"
@@ -613,7 +606,6 @@ export default function Header() {
               />
             </div>
 
-            {/* Mobile Menu Items - Black & White Styling */}
             <div className="p-4 space-y-1">
               {mobileMenuItems.map((item, index) => (
                 <Link
@@ -639,7 +631,6 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Mobile Actions/Footer */}
             <div className="p-4 border-t border-gray-100 space-y-4">
               <div className="flex items-center justify-between">
                 <button
@@ -651,7 +642,6 @@ export default function Header() {
                 </button>
               </div>
 
-              {/* Language Toggle - Mobile */}
               <button
                 onClick={toggleLanguage}
                 className="flex items-center gap-4 p-3 w-full rounded-lg text-gray-700 hover:bg-gray-100 font-semibold transition-all duration-300 border border-gray-200"

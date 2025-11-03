@@ -9,6 +9,15 @@ import Image from "next/image";
 import { Star } from "lucide-react";
 import clsx from "clsx";
 
+type LocaleKey = "testimony-title";
+type LocaleDict = Record<LocaleKey, string>;
+type TranslationsMap = Record<"id" | "en", LocaleDict>;
+
+const isLocaleDict = (v: unknown): v is LocaleDict =>
+  typeof v === "object" &&
+  v !== null &&
+  "testimony-title" in (v as Record<string, unknown>);
+
 const testimonials = [
   {
     name: "Ayu Pratiwi",
@@ -34,22 +43,23 @@ const testimonials = [
 ];
 
 // Translations (Placeholder)
-const PLACEHOLDER_TRANSLATIONS = {
-  id: {
-    "testimony-title": "Apa Kata Klien Kami",
-  },
-  en: {
-    "testimony-title": "What Our Clients Say",
-  },
+const PLACEHOLDER_TRANSLATIONS: TranslationsMap = {
+  id: { "testimony-title": "Apa Kata Klien Kami" },
+  en: { "testimony-title": "What Our Clients Say" },
 };
 
-const useTranslationPlaceholder = ({ id, en }: { id: any; en: any }) => {
-  return PLACEHOLDER_TRANSLATIONS.en; // Default ke EN untuk demo B&W fashion
+const useTranslationPlaceholder = (bundles: TranslationsMap): LocaleDict => {
+  // produksi: pilih dari context/locale; demo: pakai EN
+  return bundles.en;
 };
 
 // Component Testimonials
 export default function Testimonials() {
-  const t = useTranslationPlaceholder({ id, en }); // Ganti ke useTranslation jika hook asli berfungsi
+  const bundles: TranslationsMap = {
+    id: isLocaleDict(id) ? id : PLACEHOLDER_TRANSLATIONS.id,
+    en: isLocaleDict(en) ? en : PLACEHOLDER_TRANSLATIONS.en,
+  };
+  const t = useTranslationPlaceholder(bundles);
 
   return (
     <section className="bg-gray-50 py-20 md:py-28">
@@ -77,36 +87,36 @@ export default function Testimonials() {
               // Card Styling: White background, subtle border, strong shadow on hover
               className="bg-white p-6 rounded-xl border border-gray-200 shadow-md hover:shadow-xl transition text-left relative"
             >
-                {/* 5-Star Rating (Hardcoded for visual appeal) */}
-                <div className="mb-3 flex items-center justify-start gap-1 text-black">
-                    {Array(5).fill(0).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-black text-black" />
-                    ))}
-                </div>
+              {/* 5-Star Rating (Hardcoded for visual appeal) */}
+              <div className="mb-3 flex items-center justify-start gap-1 text-black">
+                {Array(5)
+                  .fill(0)
+                  .map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-black text-black" />
+                  ))}
+              </div>
 
               <div className="flex items-start gap-4 mb-4">
                 <div className="relative">
-                    <Image
-                        src={t.image}
-                        alt={t.name}
-                        width={50}
-                        height={50}
-                        className="rounded-full object-cover grayscale" // Gambar profil grayscale
-                    />
-                    {/* Badge Verified Buyer */}
-                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-black border-2 border-white" />
+                  <Image
+                    src={t.image}
+                    alt={t.name}
+                    width={50}
+                    height={50}
+                    className="rounded-full object-cover grayscale" // Gambar profil grayscale
+                  />
+                  {/* Badge Verified Buyer */}
+                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-black border-2 border-white" />
                 </div>
-                
+
                 <div>
                   <h3 className="text-lg font-bold text-black uppercase tracking-wider">
                     {t.name}
                   </h3>
-                  <p className="text-sm text-gray-600 font-medium">
-                    {t.role}
-                  </p>
+                  <p className="text-sm text-gray-600 font-medium">{t.role}</p>
                 </div>
               </div>
-              
+
               {/* Feedback Text */}
               <p className="text-gray-800 text-base italic leading-relaxed">
                 “{t.feedback}”

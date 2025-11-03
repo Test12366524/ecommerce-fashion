@@ -170,7 +170,7 @@ export default function ProductSale({
             Limited Sale
           </h2>
           <p className="text-base text-gray-600 mt-1">
-            Exclusive discounts—shop before they're gone.
+            {`Exclusive discounts—shop before they're gone.`}
           </p>
         </div>
         {/* CTA Button: Black Solid */}

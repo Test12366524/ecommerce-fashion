@@ -169,7 +169,7 @@ export default function Campaign({
               </div>
             </div>
             <p className="mt-3 text-sm text-gray-500">
-              Hurry! Offers are selling out fast. Don't miss out.
+              {`Hurry! Offers are selling out fast. Don't miss out.`}
             </p>
           </div>
         </div>

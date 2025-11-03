@@ -2,44 +2,58 @@
 "use client";
 
 import { useTranslation } from "@/hooks/use-translation";
-import en from "@/translations/home/en"; // Asumsi file ini ada
-import id from "@/translations/home/id"; // Asumsi file ini ada
+import en from "@/translations/home/en";
+import id from "@/translations/home/id";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+type LocaleKey = "cta-title-1" | "cta-title-2" | "cta-subtitle" | "cta-btn";
+type LocaleDict = Record<LocaleKey, string>;
+type TranslationsMap = Record<"id" | "en", LocaleDict>;
+
+const isLocaleDict = (v: unknown): v is LocaleDict =>
+  typeof v === "object" &&
+  v !== null &&
+  ["cta-title-1", "cta-title-2", "cta-subtitle", "cta-btn"].every(
+    (k) => k in (v as Record<string, unknown>)
+  );
+
 // Translations (Placeholder untuk contoh)
-const PLACEHOLDER_TRANSLATIONS = {
+const PLACEHOLDER_TRANSLATIONS: TranslationsMap = {
   id: {
     "cta-title-1": "Temukan Koleksi Eksklusif",
     "cta-title-2": "Yang Mendefinisikan Gaya Anda.",
-    "cta-subtitle": "Waktunya merevolusi lemari pakaian Anda. Desain premium menanti.",
+    "cta-subtitle":
+      "Waktunya merevolusi lemari pakaian Anda. Desain premium menanti.",
     "cta-btn": "Telusuri Koleksi",
   },
   en: {
     "cta-title-1": "Discover the Exclusive Collection",
     "cta-title-2": "That Defines Your Style.",
-    "cta-subtitle": "It's time to revolutionize your wardrobe. Premium designs await.",
+    "cta-subtitle":
+      "It's time to revolutionize your wardrobe. Premium designs await.",
     "cta-btn": "Shop The Collection",
   },
 };
 
 // Mengganti useTranslation dengan placeholder sederhana jika hook tidak tersedia
-const useTranslationPlaceholder = ({ id, en }: { id: any; en: any }) => {
-  // Dalam lingkungan nyata, ini akan mengambil bahasa aktif
-  return PLACEHOLDER_TRANSLATIONS.id; // Default ke ID untuk demo
+const useTranslationPlaceholder = (bundles: TranslationsMap): LocaleDict => {
+  return bundles.id;
 };
 
-
 export default function CTA() {
-  // Menggunakan placeholder jika hook useTranslation asli tidak diimpor/didefinisikan
-  // Jika hook asli Anda berfungsi, hapus baris di bawah dan ganti `useTranslationPlaceholder` kembali ke `useTranslation`
-  const t = useTranslationPlaceholder({ id, en }); 
+  const bundles: TranslationsMap = {
+    id: isLocaleDict(id) ? id : PLACEHOLDER_TRANSLATIONS.id,
+    en: isLocaleDict(en) ? en : PLACEHOLDER_TRANSLATIONS.en,
+  };
+
+  const t = useTranslationPlaceholder(bundles);
 
   return (
     <section className="relative bg-white py-12 md:py-32">
       {/* Background: Clean White */}
-      
+
       <div className="container mx-auto px-6 text-center">
         <motion.h2
           initial={{ opacity: 0, y: -20 }}
@@ -78,7 +92,7 @@ export default function CTA() {
             {t["cta-btn"]}
             <ArrowRight className="h-5 w-5" />
           </Link>
-          
+
           {/* Optional: Tambahkan secondary CTA */}
           <Link
             href="/about"
@@ -86,7 +100,6 @@ export default function CTA() {
           >
             Pelajari Lebih Lanjut
           </Link>
-
         </motion.div>
       </div>
     </section>

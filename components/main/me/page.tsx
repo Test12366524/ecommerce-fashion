@@ -1195,7 +1195,7 @@ export default function ProfilePage() {
                     </div>
                     <h3 className="text-xl font-bold text-black mb-4 uppercase">No Orders Yet</h3>
                     <p className="text-gray-700 mb-6">
-                      You haven't placed any orders. Start shopping now!
+                      {`You haven't placed any orders. Start shopping now!`}
                     </p>
                     <button
                       onClick={() => router.push("/product")}
