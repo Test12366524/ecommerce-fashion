@@ -163,10 +163,8 @@ export default function HomePage() {
     };
     version: number;
   };
-
   const addToCart = (product: Product, qty: number = 1) => {
     if (typeof window === "undefined") return;
-
     let cartData: CartStorage = {
       state: { isOpen: false, cartItems: [] },
       version: 0,
