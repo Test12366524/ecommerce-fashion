@@ -182,7 +182,7 @@ export default function HomePage() {
     } catch {
       cartData = { state: { isOpen: false, cartItems: [] }, version: 0 };
     }
-
+    
     const idx = cartData.state.cartItems.findIndex((i) => i.id === product.id);
 
     if (idx >= 0) {
