@@ -29,6 +29,7 @@ interface TranslationContent {
   howToOrder: string;
   tagline: string;
   switchLanguage: string;
+  cekOrder: string;
 }
 interface Translations {
   id: TranslationContent;
@@ -271,6 +272,7 @@ export default function Header() {
       testimonials: "Penjualan Terbaik",
       tagline: "ORIGINAL EST 2018",
       switchLanguage: "Ganti ke English",
+      cekOrder: "Lacak Pesanan",
     },
     en: {
       home: "Home",
@@ -280,6 +282,7 @@ export default function Header() {
       testimonials: "Best Seller",
       tagline: "ORIGINAL EST 2018",
       switchLanguage: "Switch to Bahasa",
+      cekOrder: "Track Order",
     },
   };
   const t = translations[language];
@@ -314,6 +317,7 @@ export default function Header() {
       { name: t.products, href: "/product" },
       { name: t.service, href: "/product?q=new-arrivals" },
       { name: t.testimonials, href: "/product?q=best-seller" },
+      { name: t.cekOrder, href: "/cek-order" },
       { name: t.howToOrder, href: "/how-to-order" },
     ],
     [t]
@@ -392,9 +396,7 @@ export default function Header() {
         )}
       >
         <MarqueeBanner
-          message={
-            "NEW ARRIVAL • SALE UP TO 70% • GRATIS ONGKIR"
-          }
+          message={"NEW ARRIVAL • SALE UP TO 70% • GRATIS ONGKIR"}
           size="sm"
           speed={60}
           pauseOnHover

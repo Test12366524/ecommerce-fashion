@@ -6,6 +6,7 @@ import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { Product } from "@/types/admin/product";
 import { useGetProductVariantBySlugQuery } from "@/services/product.service";
 import useCart from "@/hooks/use-cart";
+import Swal from "sweetalert2";
 
 type ProductVariant = {
   id: number;
@@ -106,14 +107,31 @@ export default function VariantPickerModal({
   const curStock = toNumber(selected?.stock);
   const total = curPrice * qty;
 
-  const handleAdd = () => {
-    if (!selected) return;
-    const vId = selected.id;
-    const price = curPrice || toNumber(product.price);
-    addItem({ ...product, price }, vId);
-    onAdded?.();
-    onClose();
-  };
+ const handleAdd = () => {
+   if (!selected) return;
+   const vId = selected.id;
+   const price = curPrice || toNumber(product.price);
+
+   // Add item to cart
+   addItem({ ...product, price }, vId);
+
+   // Trigger SweetAlert
+   Swal.fire({
+     icon: "success", // Success icon
+     title: "Berhasil!",
+     text: "Produk telah ditambahkan ke keranjang.",
+     showConfirmButton: false,
+     timer: 1500, // The alert will auto-close after 1.5 seconds
+     toast: true, // Show as a toast message
+     position: "top-end", // Position at top-right
+     background: "#28a745", // Green background for success
+     color: "#fff", // White text color
+   });
+
+   // Optional: trigger any callback function after the item is added
+   onAdded?.();
+   onClose();
+ };
 
   return (
     <div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true">

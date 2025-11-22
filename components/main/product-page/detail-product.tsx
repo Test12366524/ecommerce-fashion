@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/admin/product";
 import useCart from "@/hooks/use-cart";
+import Swal from "sweetalert2";
 
 type ProductDetailProps = {
   isOpen: boolean;
@@ -74,16 +75,40 @@ ProductDetailProps) {
 
   // Updated handleAddToCart function
   const handleAddToCart = () => {
+    if (maxQty === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Stok Habis",
+        text: "Produk ini sudah habis di stok!",
+        showConfirmButton: true,
+        confirmButtonText: "Tutup",
+      }).then(() => {
+        // Setelah alert selesai, tutup modal
+        onClose();
+      });
+      return;
+    }
+
     // Add the product to cart multiple times based on quantity
     for (let i = 0; i < quantity; i++) {
       addItem(product, product.product_variant_id ?? 0);
     }
 
-    // Open the cart sidebar to show the added items
-    openCart();
-
-    // Close the modal
-    onClose();
+    // Show SweetAlert confirmation
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil Ditambahkan!",
+      text: `Produk ${product.name} telah ditambahkan ke keranjang (${quantity} item).`,
+      showConfirmButton: false,
+      timer: 1500, // Alert auto-closes after 1.5 seconds
+      toast: true, // Display as a toast notification
+      position: "top-end", // Position at the top-right
+      background: "#28a745", // Green background for success
+      color: "#fff", // White text
+    }).then(() => {
+      // Setelah alert selesai, tutup modal
+      onClose();
+    });
 
     // Reset quantity for next time
     setQuantity(1);
