@@ -236,7 +236,7 @@ export default function PublicTransaction() {
     address_line_2: "",
     postal_code: "40535",
     guest_name: "Test Guest",
-    guest_email: "test-guest@gmail.com",
+    guest_email: "akmalrafly875@gmail.com",
     guest_phone: "08954058734653",
     rajaongkir_province_id: 0,
     rajaongkir_city_id: 0,

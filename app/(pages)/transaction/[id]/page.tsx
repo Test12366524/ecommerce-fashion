@@ -27,6 +27,18 @@ import Image from "next/image";
 import DotdLoader from "@/components/loader/3dot";
 import { formatRupiahWithRp } from "@/lib/format-utils"; // Assuming you have a utility to format Rp
 
+// --- GRASCALE ACCENT CONSTANTS (Aksen utama: Hitam / Abu-abu gelap) ---
+const ACCENT_TEXT_COLOR = "text-gray-900";
+const ACCENT_BG_COLOR = "bg-gray-900";
+const ACCENT_HOVER_BG = "hover:bg-gray-700";
+const ACCENT_BG_LIGHT = "bg-gray-100";
+const ACCENT_SHADOW = "shadow-gray-400/30";
+const ACCENT_BORDER = "border-gray-900";
+
+// --- STATUS COLOR (Dibiarkan tetap warna alert agar fungsional) ---
+const STATUS_PENDING_BG = "bg-yellow-100";
+const STATUS_PENDING_TEXT = "text-yellow-700";
+
 export default function GuestConfirmationPage() {
   const params = useParams();
   const router = useRouter();
@@ -138,38 +150,17 @@ export default function GuestConfirmationPage() {
 
   if (isError || !transactionData) {
     return (
-      <div className="min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-red-200 via-red-100 to-gray-50 p-6">
-        {/* Error Icon and Message */}
-        <div className="flex flex-col items-center bg-white p-8 rounded-xl shadow-xl max-w-sm w-full text-center">
-          <div className="bg-red-500 p-4 rounded-full mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-12 h-12 text-white"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM10 5a1 1 0 00-1 1v3a1 1 0 102 0V6a1 1 0 00-1-1zM10 9a1 1 0 00-1 1v2a1 1 0 102 0V10a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <p className="text-xl font-semibold text-red-600 mb-4">
-            Data Transaksi Tidak Ditemukan
-          </p>
-          <p className="text-gray-700 mb-6">
-            Maaf, kami tidak dapat menemukan data transaksi yang Anda cari.
-            Pastikan ID transaksi yang dimasukkan benar.
-          </p>
-          <button
-            onClick={() => router.push("/")}
-            className="bg-red-500 text-white py-2 px-6 rounded-full text-lg font-semibold hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
-          >
-            Kembali ke Beranda
-          </button>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+        <p className="text-red-500 font-bold text-xl">
+          Data Transaksi Tidak Ditemukan
+        </p>
+        <button
+          onClick={() => router.push("/")}
+          // Ganti warna teks error
+          className={`text-gray-700 hover:underline`}
+        >
+          Kembali ke Beranda
+        </button>
       </div>
     );
   }
@@ -209,26 +200,33 @@ export default function GuestConfirmationPage() {
     totalProductPrice + (transactionData.shipping_cost || 0);
 
   return (
-    <div className="min-h-screen bg-white pt-24 pb-12">
+    // Ganti gradient dari hijau muda ke abu-abu muda
+    <div
+      className={`min-h-screen bg-gradient-to-br from-white to-gray-100 pt-24 pb-12`}
+    >
       <div className="container mx-auto px-6 lg:px-12">
         {/* HEADER */}
         <div className="mb-8">
           <button
             onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-gray-500 hover:text-black transition-colors mb-4"
+            // Ganti warna hover
+            className={`flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4`}
           >
             <ArrowLeft className="w-5 h-5" /> Kembali ke Beranda
           </button>
 
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-full mb-4">
-              <CreditCard className="w-4 h-4 text-gray-700" />
-              <span className="text-sm font-medium text-gray-700">
+            <div
+              // Ganti warna background dan teks
+              className={`inline-flex items-center gap-2 ${ACCENT_BG_LIGHT} px-4 py-2 rounded-full mb-4`}
+            >
+              <CreditCard className={`w-4 h-4 ${ACCENT_TEXT_COLOR}`} />
+              <span className={`text-sm font-medium ${ACCENT_TEXT_COLOR}`}>
                 {getStatusText(transactionData.status)}
               </span>
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-              Selesaikan <span className="text-gray-700">Pembayaran</span>
+              Selesaikan <span className={ACCENT_TEXT_COLOR}>Pembayaran</span>
             </h1>
             <p className="text-gray-600">
               Order ID:{" "}
@@ -243,9 +241,12 @@ export default function GuestConfirmationPage() {
           {/* === KOLOM KIRI: INSTRUKSI & UPLOAD === */}
           <div className="lg:col-span-2 space-y-6">
             {/* 1. Informasi Rekening & Nominal */}
-            <div className="bg-white rounded-3xl p-6 shadow-lg border-l-4 border-gray-700">
+            <div
+              // Ganti warna border aksen
+              className={`bg-white rounded-3xl p-6 shadow-lg border-l-4 ${ACCENT_BORDER}`}
+            >
               <h3 className="font-bold text-xl text-gray-900 mb-6 flex items-center gap-2">
-                <CreditCard className="w-6 h-6 text-gray-700" />
+                <CreditCard className={`w-6 h-6 ${ACCENT_TEXT_COLOR}`} />
                 Transfer Pembayaran
               </h3>
 
@@ -253,7 +254,7 @@ export default function GuestConfirmationPage() {
                 {/* Bank Info */}
                 <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                   <div className="flex items-center gap-4 mb-4">
-                    {/* Logo Bank Dummy */}
+                    {/* Logo Bank Dummy - Ganti dari biru ke abu-abu gelap */}
                     <div className="w-16 h-10 bg-gray-800 rounded flex items-center justify-center text-white font-bold italic">
                       BCA
                     </div>
@@ -273,7 +274,8 @@ export default function GuestConfirmationPage() {
                       </span>
                       <button
                         onClick={() => handleCopyRekening("8735089123")}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+                        // Ganti warna teks
+                        className={`p-2 hover:bg-gray-100 rounded-lg transition-colors ${ACCENT_TEXT_COLOR}`}
                         title="Salin"
                       >
                         <Copy className="w-5 h-5" />
@@ -288,18 +290,23 @@ export default function GuestConfirmationPage() {
                     Total yang harus dibayar:
                   </p>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-3xl lg:text-4xl font-bold text-gray-700">
+                    <span
+                      // Ganti warna teks
+                      className={`text-3xl lg:text-4xl font-bold ${ACCENT_TEXT_COLOR}`}
+                    >
                       {formatRupiahWithRp(totalWithShipping)}
                     </span>
                     <button
                       onClick={() =>
                         handleCopyRekening(totalWithShipping.toString())
                       }
-                      className="text-gray-400 hover:text-gray-700"
+                      // Ganti warna hover
+                      className={`text-gray-400 hover:text-gray-700`}
                     >
                       <Copy className="w-5 h-5" />
                     </button>
                   </div>
+                  {/* Warna alert/warning tetap kuning untuk fungsionalitas */}
                   <div className="bg-yellow-50 text-yellow-800 px-4 py-3 rounded-xl text-sm flex items-start gap-2">
                     <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" />
                     <p>
@@ -314,7 +321,7 @@ export default function GuestConfirmationPage() {
             {/* 2. Upload Bukti Bayar */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <h3 className="font-bold text-xl text-gray-900 mb-4 flex items-center gap-2">
-                <UploadCloud className="w-6 h-6 text-gray-700" />
+                <UploadCloud className={`w-6 h-6 ${ACCENT_TEXT_COLOR}`} />
                 Konfirmasi Pembayaran
               </h3>
 
@@ -346,7 +353,10 @@ export default function GuestConfirmationPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-gray-700">
+                    <div
+                      // Ganti warna background dan teks ikon upload
+                      className={`w-16 h-16 ${ACCENT_BG_LIGHT} rounded-full flex items-center justify-center mb-4 ${ACCENT_TEXT_COLOR}`}
+                    >
                       <Download className="w-8 h-8" />
                     </div>
                     <p className="text-lg font-bold text-gray-700 mb-1">
@@ -362,7 +372,8 @@ export default function GuestConfirmationPage() {
               <button
                 onClick={handleUpload}
                 disabled={!selectedFile || isUploading}
-                className="w-full mt-6 bg-gray-700 text-white py-4 rounded-2xl font-bold text-lg hover:bg-gray-800/90 transition-all shadow-lg shadow-gray-700/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                // Ganti warna tombol dan shadow
+                className={`w-full mt-6 ${ACCENT_BG_COLOR} text-white py-4 rounded-2xl font-bold text-lg ${ACCENT_HOVER_BG} transition-all shadow-lg ${ACCENT_SHADOW} disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
               >
                 {isUploading ? (
                   <>
@@ -393,7 +404,10 @@ export default function GuestConfirmationPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-500">Status</span>
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-bold capitalize">
+                <span
+                  // Ganti warna status pending menjadi abu-abu muted
+                  className={`px-3 py-1 ${ACCENT_BG_LIGHT} text-gray-700 rounded-full text-sm font-bold capitalize`}
+                >
                   {getStatusText(transactionData.status)}
                 </span>
               </div>
@@ -402,7 +416,7 @@ export default function GuestConfirmationPage() {
             {/* Detail Pembeli & Pengiriman */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-gray-700" />
+                <User className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} />
                 Info Pembeli
               </h3>
               <div className="space-y-3 text-sm text-gray-600 mb-6">
@@ -420,7 +434,7 @@ export default function GuestConfirmationPage() {
               </div>
 
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2 pt-4 border-t border-gray-100">
-                <MapPin className="w-5 h-5 text-gray-700" />
+                <MapPin className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} />
                 Alamat Pengiriman
               </h3>
               <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-xl">
@@ -438,7 +452,10 @@ export default function GuestConfirmationPage() {
                 </p>
               </div>
               <div className="mt-4 flex items-center gap-2 text-sm">
-                <div className="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg font-bold uppercase">
+                <div
+                  // Ganti warna chip kurir
+                  className={`${ACCENT_BG_LIGHT} text-gray-800 px-3 py-1 rounded-lg font-bold uppercase`}
+                >
                   {transactionData.courier}
                 </div>
                 <span className="text-gray-500">{transactionData.service}</span>
@@ -448,7 +465,7 @@ export default function GuestConfirmationPage() {
             {/* Detail Produk */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Package className="w-5 h-5 text-gray-700" />
+                <Package className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} />
                 Detail Produk
               </h3>
 
@@ -473,7 +490,10 @@ export default function GuestConfirmationPage() {
                             {item.quantity} x Rp{" "}
                             {formatRupiahWithRp(item.price)}
                           </span>
-                          <span className="font-bold text-gray-700">
+                          <span
+                            // Ganti warna teks harga
+                            className={`font-bold text-gray-800`}
+                          >
                             {formatRupiahWithRp(item.quantity * item.price)}
                           </span>
                         </div>
@@ -492,7 +512,10 @@ export default function GuestConfirmationPage() {
                 </div>
                 <div className="flex justify-between font-bold text-lg text-gray-900 pt-2">
                   <span>Total</span>
-                  <span className="text-gray-700">
+                  <span
+                    // Ganti warna teks total akhir
+                    className={ACCENT_TEXT_COLOR}
+                  >
                     {formatRupiahWithRp(totalWithShipping)}
                   </span>
                 </div>

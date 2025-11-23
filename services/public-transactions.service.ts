@@ -6,6 +6,7 @@ export interface Transaction {
   id: number;
   user_id: number | string | null;
   reference: string;
+  encypted_id?: string;
   ref_number: number;
   total: number;
   discount_total: number;
@@ -88,7 +89,6 @@ export interface Transaction {
     }>;
   }>;
 }
-
 
 export interface TransactionDetail {
   product_id?: number;
