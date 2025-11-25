@@ -245,10 +245,10 @@ export default function ProductSale() {
       <div className="flex items-end justify-between border-b border-gray-200 pb-4 mb-4">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
-            Best Sellers
+            New Arrivals
           </h2>
           <p className="text-base text-gray-600 mt-1">
-            Exclusive picks—our most-loved items.
+            {`Just Landed. Get Yours Before It's Gone`}
           </p>
         </div>
         <Link
