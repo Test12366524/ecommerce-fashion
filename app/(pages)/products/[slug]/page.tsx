@@ -1,5 +1,3 @@
-// app/products/[slug]/page.tsx
-
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
@@ -79,19 +77,28 @@ interface ProductDetail extends ApiProduct {
   product_variant_id?: number | null;
 }
 
-// Definisikan props untuk halaman dinamis
+// PERBAIKAN: Sesuaikan dengan Next.js 15 PageProps
 interface ProductDetailPageProps {
-  params: {
-    slug: string; // Next.js akan menyediakan slug dari URL
-  };
+  params: Promise<{
+    slug: string;
+  }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-// Hapus CartItem interface di sini karena sudah diimpor dari useCart
+export default async function ProductDetailPage({
+  params,
+  searchParams,
+}: ProductDetailPageProps) {
+  // PERBAIKAN: Await params untuk mendapatkan slug
+  const { slug } = await params;
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { slug } = params;
+  // Komponen client untuk handling state dan interaksi
+  return <ProductDetailClient slug={slug} />;
+}
 
-  // Mendapatkan fungsi addItem dari useCart hook (PERBAIKAN)
+// Pisahkan logic client-side ke komponen terpisah
+function ProductDetailClient({ slug }: { slug: string }) {
+  // Mendapatkan fungsi addItem dari useCart hook
   const { addItem, cartItems } = useCart();
 
   // State untuk melacak gambar utama yang ditampilkan
@@ -490,11 +497,11 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           {/* Tombol Tambah ke Keranjang */}
           <div className="mt-10">
             <button
-              onClick={addToCart} // <-- Panggil fungsi addToCart
+              onClick={addToCart}
               type="button"
               disabled={
                 currentStock <= 0 || (variants.length > 0 && !selectedVariant)
-              } // Disable jika stok 0 ATAU varian belum dipilih
+              }
               className="flex w-full items-center justify-center rounded-md border border-transparent bg-black px-8 py-3 text-base font-medium text-white hover:bg-gray-800 disabled:bg-gray-400"
             >
               <ShoppingCart className="w-5 h-5 mr-2" />
