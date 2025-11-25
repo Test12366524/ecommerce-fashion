@@ -40,7 +40,7 @@ export const productCategoryApi = apiSlice.injectEndpoints({
         total: number;
         per_page: number;
       },
-      { page: number; paginate: number }
+      { page?: number; paginate?: number }
     >({
       query: ({ page, paginate }) => ({
         url: `/public/product-categories`,
@@ -85,8 +85,8 @@ export const productCategoryApi = apiSlice.injectEndpoints({
         per_page: number;
       },
       {
-        page: number;
-        paginate: number;
+        page?: number;
+        paginate?: number;
         orderBy?: string; // e.g. "updated_at" atau "products.sales"
         order?: "asc" | "desc"; // default diset di pemanggil
         searchBySpecific?: string;

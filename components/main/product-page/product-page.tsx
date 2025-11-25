@@ -50,7 +50,6 @@ function getProp(
   return typeof v === "string" ? v : undefined;
 }
 
-
 const getNumberProp = (obj: unknown, key: string): number | undefined =>
   getProp(obj, key, "number");
 const getStringProp = (obj: unknown, key: string): string | undefined =>
@@ -268,8 +267,6 @@ export default function ProductsPage() {
   const order: "asc" | "desc" | undefined = orderBy ? "desc" : undefined;
 
   const { data: listResp, isLoading } = useGetProductListQuery({
-    page: currentPage,
-    paginate: ITEMS_PER_PAGE,
     orderBy,
     order,
     search: urlSearchTerm || undefined,
@@ -508,6 +505,9 @@ export default function ProductsPage() {
     inStockOnly,
     onlyDiscount,
   ]);
+
+  console.log("Total Halaman Terfilter:", totalFilteredPages);
+  console.log("Jumlah Produk Terfilter:", sortedProducts.length);
 
   const formatCurrency = (n: number): string =>
     `Rp ${n.toLocaleString("id-ID")}`;
