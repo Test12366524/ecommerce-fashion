@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Heart,
   ShoppingCart,
@@ -28,6 +28,7 @@ import DotdLoader from "@/components/loader/3dot";
 import useCart from "@/hooks/use-cart";
 import clsx from "clsx";
 import VariantPickerModal from "@/components/variant-picker-modal";
+import { ProductCategory } from "@/types/master/product-category";
 
 /* =========================
    Small typed helpers
@@ -211,6 +212,7 @@ const formatQueryToTitle = (q: string | null): string => {
 };
 
 export default function ProductsPage() {
+  const router = useRouter();
   /* ---------- Search params ---------- */
   const [sp, setSp] = useState<URLSearchParams | null>(null);
   const rawQ = sp?.get("q") ?? null;
@@ -283,6 +285,76 @@ export default function ProductsPage() {
     }
     return ["T-Shirts", "Hoodies", "Pants", "Footwear", "Bags", "Accessories"];
   }, [categoryResp]);
+
+  const categoryOptionList = useMemo(
+    () =>
+      ((categoryResp?.data ?? []) as ProductCategory[]).map((c) => ({
+        label: c.name ?? "Kategori",
+        slug: c.slug ?? String(c.id),
+      })),
+    [categoryResp?.data]
+  );
+
+  useEffect(() => {
+    const slugFromUrl = sp?.get("category") ?? null;
+
+    if (!slugFromUrl) {
+      if (filter.category !== "all") {
+        setFilter((prev) => ({ ...prev, category: "all" }));
+        setCurrentPage(1);
+      }
+      return;
+    }
+
+    // tunggu data kategori tersedia
+    if (!categoryOptionList || categoryOptionList.length === 0) return;
+
+    const matched = categoryOptionList.find((c) => c.slug === slugFromUrl);
+    const fallbackByLabel = categoryOptionList.find(
+      (c) =>
+        c.label.trim().toLowerCase() ===
+        decodeURIComponent(slugFromUrl).trim().toLowerCase()
+    );
+
+    const newCategory =
+      matched?.slug ?? fallbackByLabel?.slug ?? decodeURIComponent(slugFromUrl);
+
+    // hanya set kalau beda (mencegah setFilter berulang)
+    if (newCategory !== filter.category) {
+      setFilter((prev) => ({ ...prev, category: newCategory }));
+      setCurrentPage(1);
+    }
+    // Dep array: hanya re-run saat sp (string) atau category list berubah
+  }, [sp?.toString(), categoryOptionList]);
+
+  // helper untuk update filter + URL (preserve query lain)
+  const setCategoryAndSyncUrl = (slug: string) => {
+    // update ui state
+    setFilter((prev) => ({ ...prev, category: slug }));
+    setCurrentPage(1);
+
+    try {
+      // bangun URLSearchParams dari sp (jika ada), agar kita tidak menghapus param lain seperti q
+      const params = new URLSearchParams(sp?.toString() ?? "");
+      if (slug === "all") {
+        params.delete("category");
+      } else {
+        params.set("category", slug);
+      }
+
+      const query = params.toString();
+      const target = query ? `/product?${query}` : `/product`;
+      // gunakan router.replace supaya tidak menumpuk history; push juga boleh
+      router.replace(target);
+    } catch (err) {
+      // fallback simple
+      router.replace(
+        slug === "all"
+          ? "/product"
+          : `/product?category=${encodeURIComponent(slug)}`
+      );
+    }
+  };
 
   const [activeImg, setActiveImg] = useState(0);
   const totalPages = useMemo(() => listResp?.last_page ?? 1, [listResp]);
@@ -410,8 +482,13 @@ export default function ProductsPage() {
         !term ||
         p.name.toLowerCase().includes(term) ||
         p.category_name.toLowerCase().includes(term);
+      const nameToSlug = new Map<string, string>();
+      categoryOptionList.forEach((o) => nameToSlug.set(o.label, o.slug));
+
       const matchCategory =
-        filter.category === "all" || p.category_name === filter.category;
+        filter.category === "all" ||
+        nameToSlug.get(p.category_name) === filter.category;
+
       const matchPrice =
         filter.priceRange === "all" ||
         (filter.priceRange === "under-100k" && price < 100_000) ||
@@ -506,9 +583,6 @@ export default function ProductsPage() {
     onlyDiscount,
   ]);
 
-  console.log("Total Halaman Terfilter:", totalFilteredPages);
-  console.log("Jumlah Produk Terfilter:", sortedProducts.length);
-
   const formatCurrency = (n: number): string =>
     `Rp ${n.toLocaleString("id-ID")}`;
   const totalModalPrice = currentPrice * qty;
@@ -525,25 +599,26 @@ export default function ProductsPage() {
             name="category"
             value="all"
             checked={filter.category === "all"}
-            onChange={() => setFilter({ ...filter, category: "all" })}
+            onChange={() => setCategoryAndSyncUrl("all")}
             className="text-black focus:ring-black"
           />
           <span>All Categories</span>
         </label>
-        {categoryOptions.map((cat) => (
+
+        {categoryOptionList.map((opt) => (
           <label
-            key={cat}
+            key={opt.slug}
             className="flex items-center space-x-2 text-sm text-gray-700"
           >
             <input
               type="radio"
               name="category"
-              value={cat}
-              checked={filter.category === cat}
-              onChange={() => setFilter({ ...filter, category: cat })}
+              value={opt.slug}
+              checked={filter.category === opt.slug}
+              onChange={() => setCategoryAndSyncUrl(opt.slug)}
               className="text-black focus:ring-black"
             />
-            <span>{cat}</span>
+            <span>{opt.label}</span>
           </label>
         ))}
       </div>

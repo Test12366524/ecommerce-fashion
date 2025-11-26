@@ -2,92 +2,163 @@ import { apiSlice } from "@/services/base-query";
 
 /** ===== Types persis payload publik ===== */
 
+export interface ProductMedia {
+  id: number;
+  model_type: string;
+  model_id: number;
+  uuid: string;
+  collection_name: string;
+  name: string;
+  file_name: string;
+  mime_type: string;
+  disk: string;
+  size: number;
+  order_column: number;
+  created_at: string;
+  updated_at: string;
+  original_url: string;
+  preview_url?: string;
+}
+
+export interface Product {
+  id: number;
+  shop_id?: number;
+  product_category_id?: number;
+  product_merk_id?: number;
+  name: string;
+  slug?: string;
+  description?: string;
+  price: number;
+  sales?: number;
+  stock?: number;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
+  diameter?: number;
+  rating?: number;
+  total_reviews?: number;
+  status?: number;
+  created_at?: string;
+  updated_at?: string;
+  image?: string;
+  image_2?: string;
+  image_3?: string;
+  media?: ProductMedia[];
+}
+
+export interface ProductVariant {
+  id: number;
+  product_id: number;
+  name: string;
+  sku: string;
+  price: string;
+  sales?: number;
+  stock?: number;
+  weight?: number;
+  length?: number;
+  width?: number;
+  height?: number;
+  diameter?: number;
+  rating?: string;
+  total_reviews?: number;
+  status?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ShopDetail {
+  id: number;
+  transaction_id: number;
+  transaction_shop_id?: number;
+  product_id: number;
+  product_variant_id: number | null;
+  product_detail?: string | null; // JSON string of variant detail
+  price: number;
+  quantity: number;
+  total: number;
+  created_at?: string;
+  updated_at?: string;
+  product?: Product;
+  product_variant?: ProductVariant;
+}
+
+export interface ShopInfo {
+  id: number;
+  user_id: number;
+  name: string;
+  slug: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  description?: string;
+  latitude?: string;
+  longitude?: string;
+  rating?: number;
+  total_reviews?: number;
+  rajaongkir_province_id?: number;
+  rajaongkir_city_id?: number;
+  rajaongkir_district_id?: number;
+  status?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ShopPayload {
+  id: number;
+  transaction_id: number;
+  shop_id: number;
+  receipt_code: string | null;
+  courier: string;
+  shipment_detail: string | null; // JSON string
+  shipment_parameter: string | null; // JSON string
+  total: number;
+  shipment_cost: number;
+  grand_total?: number;
+  shipment_status?: number;
+  created_at?: string;
+  updated_at?: string;
+  shop?: ShopInfo;
+  shipments?: unknown[];
+  details: ShopDetail[];
+}
+
 export interface Transaction {
   id: number;
   user_id: number | string | null;
   reference: string;
   encypted_id?: string;
-  ref_number: number;
+  ref_number?: number;
   total: number;
   discount_total: number;
   shipment_cost: number;
   grand_total: number;
-  order_id: string;
-  payment_link: string | null;
-  expires_at: string;
-  paid_at: string | null;
+  order_id?: string;
+  payment_link?: string | null;
+  expires_at?: string;
+  paid_at?: string | null;
   status: number;
   created_at: string;
   updated_at: string;
-  user_name: string;
-  user_email: string;
+  user_name?: string;
+  user_email?: string;
   address_line_1: string;
-  address_line_2: string | null;
-  postal_code: string;
-  payment_type: string;
-  guest_name: string;
-  guest_email: string;
-  guest_phone: string;
-  district_name: string;
-  city_name: string;
-  province_name: string;
-  courier: string;
-  service: string;
-  shipping_cost: number;
-  resi_number?: string;
+  address_line_2?: string | null;
+  postal_code?: string;
+  payment_type?: string;
+  guest_name?: string;
+  guest_email?: string;
+  guest_phone?: string;
+  district_name?: string;
+  city_name?: string;
+  province_name?: string;
+  courier?: string;
+  service?: string;
+  shipping_cost?: number;
+  resi_number?: string | null;
 
-  // This contains the store details and products
-  stores?: Array<{
-    id: number;
-    transaction_id: number;
-    shop_id: number;
-    receipt_code: string | null;
-    courier: string;
-    shipment_detail: string;
-    shipment_cost: number;
-    total: number;
-    shipment_status: number;
-    shipment_parameter: string;
-    shop: {
-      id: number;
-      user_id: number;
-      name: string;
-      slug: string;
-      phone: string;
-      email: string;
-      address: string;
-      description: string;
-      rating: string;
-      total_reviews: number;
-      status: boolean;
-      created_at: string;
-      updated_at: string;
-      rajaongkir_province_id: number;
-      rajaongkir_city_id: number;
-      rajaongkir_district_id: string;
-    };
-    details: Array<{
-      id: number;
-      product_id: number;
-      product_variant_id: number | null;
-      quantity: number;
-      price: number;
-      total: number;
-      product: {
-        id: number;
-        name: string;
-        price: number;
-        image: string;
-        stock: number;
-        description: string;
-        weight: number;
-        rating: string;
-        total_reviews: number;
-        created_at: string;
-        updated_at: string;
-      };
-    }>;
-  }>;
+  // NOTE: response uses "shops" (not "stores")
+  shops?: ShopPayload[];
 }
 
 export interface TransactionDetail {

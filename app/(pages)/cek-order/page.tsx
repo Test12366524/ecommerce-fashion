@@ -30,6 +30,7 @@ import { getEncryptedTransactionId } from "@/app/actions/security";
 
 // Importing the service hook to fetch data from the API
 import { useGetPublicTransactionByReferenceQuery } from "@/services/public-transactions.service";
+import { ApiDetail, ApiTransaction, RawShipmentDetail } from "@/types/admin/transaction";
 
 // --- TIPE DATA ---
 type OrderStatus =
@@ -114,6 +115,9 @@ export default function TrackOrderPage() {
     generateEncryptedId();
   }, [result]);
 
+  const toOrderStatus = (statusNum: number) =>
+    statusNum === 0 ? "PENDING" : statusNum === 1 ? "PAID" : "SHIPPED";
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -134,42 +138,77 @@ export default function TrackOrderPage() {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     if (transactionData) {
+      const apiTx = transactionData as ApiTransaction;
+
+      // Ambil shop pertama (sesuaikan bila multi-shop)
+      const shop =
+        apiTx.shops && apiTx.shops.length > 0 ? apiTx.shops[0] : undefined;
+
+      // Parse shipment detail (string JSON) jika ada
+      let shipmentObj: RawShipmentDetail | null = null;
+      try {
+        if (shop?.shipment_detail) {
+          shipmentObj = JSON.parse(shop.shipment_detail);
+        }
+      } catch (e) {
+        shipmentObj = null;
+        console.warn("Failed to parse shipment_detail", e);
+      }
+
+      const items = (shop?.details ?? []).map((detail: ApiDetail) => {
+        // prefer API embedded product object; fallback ke parsing product_detail
+        let productName = "Produk";
+        let productImage = "";
+
+        if (detail.product) {
+          productName = detail.product.name ?? productName;
+          productImage =
+            detail.product.image ??
+            (detail.product.media && detail.product.media[0]?.original_url) ??
+            "";
+        } else if (detail.product_detail) {
+          try {
+            const pd = JSON.parse(detail.product_detail);
+            productName = pd.name ?? productName;
+            productImage = pd.image ?? productImage;
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        return {
+          id: detail.id,
+          name: productName,
+          image: productImage,
+          qty: detail.quantity,
+          price: detail.price,
+          total: detail.total,
+        };
+      });
+
       const mockData: TrackResult = {
-        id: transactionData.id,
-        reference: transactionData.reference,
-        encypted_id: transactionData.encypted_id || "",
-        status: transactionData.status === 0 ? "PENDING" : "SHIPPED",
-        created_at: transactionData.created_at,
-        grand_total: transactionData.grand_total,
-        resi_number: transactionData.resi_number,
-        courier: transactionData.stores?.[0]?.courier || "",
-        service: transactionData.stores?.[0]?.shipment_detail || "",
-        buyer_name: transactionData.guest_name,
-        buyer_address: transactionData.address_line_1,
-        items:
-          transactionData.stores?.[0]?.details.map(
-            (detail: TransactionDetail) => ({
-              id: detail.id,
-              name: detail.product.name,
-              image: detail.product.image,
-              qty: detail.quantity,
-              price: detail.price,
-            })
-          ) || [],
+        id: apiTx.id,
+        reference: apiTx.reference,
+        encypted_id: apiTx.encypted_id ?? "",
+        status: toOrderStatus(apiTx.status),
+        created_at: apiTx.created_at,
+        grand_total: apiTx.grand_total,
+        resi_number: apiTx.resi_number ?? undefined,
+        courier: shipmentObj?.code ?? shop?.courier ?? "",
+        service: shipmentObj?.service ?? shop?.shipment_detail ?? "",
+        buyer_name: apiTx.guest_name ?? "Guest",
+        buyer_address: apiTx.address_line_1 ?? "",
+        items,
         history: [
           {
             status: "PENDING",
             description: "Pesanan dibuat, menunggu pembayaran",
-            date: new Date().toISOString(),
+            date: apiTx.created_at,
           },
-          {
-            status: "PAID",
-            description: "Pembayaran diterima",
-            date: new Date().toISOString(),
-          },
-          // ... logic history lainnya
+          // ... kamu bisa inject history nyata kalau API sediakan
         ],
       };
+
       setResult(mockData);
     } else {
       // Jika data tidak ditemukan di API (atau API error)

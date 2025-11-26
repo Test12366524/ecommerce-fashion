@@ -18,16 +18,24 @@ import {
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 
-// Importing necessary services
+import Image from "next/image";
+import DotdLoader from "@/components/loader/3dot";
+import { formatRupiahWithRp } from "@/lib/format-utils";
+
+// Service hooks (pastikan service file sudah mengekspor tipe Transaction)
 import {
   useGetPublicTransactionByIdQuery,
   useUpdatePublicTransactionWithFormMutation,
-} from "@/services/public-transactions.service"; // Import mutation and query hooks
-import Image from "next/image";
-import DotdLoader from "@/components/loader/3dot";
-import { formatRupiahWithRp } from "@/lib/format-utils"; // Assuming you have a utility to format Rp
+} from "@/services/public-transactions.service";
+import type {
+  Transaction,
+  ShopPayload,
+  ShopDetail,
+  Product,
+  ProductMedia,
+} from "@/services/public-transactions.service";
 
-// --- GRASCALE ACCENT CONSTANTS (Aksen utama: Hitam / Abu-abu gelap) ---
+// --- GRASCALE ACCENT CONSTANTS ---
 const ACCENT_TEXT_COLOR = "text-gray-900";
 const ACCENT_BG_COLOR = "bg-gray-900";
 const ACCENT_HOVER_BG = "hover:bg-gray-700";
@@ -35,35 +43,29 @@ const ACCENT_BG_LIGHT = "bg-gray-100";
 const ACCENT_SHADOW = "shadow-gray-400/30";
 const ACCENT_BORDER = "border-gray-900";
 
-// --- STATUS COLOR (Dibiarkan tetap warna alert agar fungsional) ---
-const STATUS_PENDING_BG = "bg-yellow-100";
-const STATUS_PENDING_TEXT = "text-yellow-700";
-
 export default function GuestConfirmationPage() {
   const params = useParams();
   const router = useRouter();
-  const transactionId = params.id as string; // Fetch the transaction ID from URL params
+  const transactionId = params.id as string;
 
-  // State hooks
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Fetch transaction data by ID (instead of by reference)
+  // query typed by service (should return Transaction)
   const {
     data: transactionData,
     isLoading,
     isError,
-  } = useGetPublicTransactionByIdQuery(transactionId); // Use the new query for transaction by ID
+  } = useGetPublicTransactionByIdQuery(transactionId);
 
-  // Mutation hook to update transaction with proof
   const [uploadPaymentProof] = useUpdatePublicTransactionWithFormMutation();
 
   useEffect(() => {
-    if (transactionData) {
-      // Additional logic can be added if needed when transaction data is fetched
-    }
-  }, [transactionData]);
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const handleCopyRekening = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -82,7 +84,6 @@ export default function GuestConfirmationPage() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
-      // File size validation (Max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         Swal.fire({
           icon: "error",
@@ -108,14 +109,11 @@ export default function GuestConfirmationPage() {
     }
 
     setIsUploading(true);
-
     try {
-      // Prepare the FormData for API
       const formData = new FormData();
       formData.append("image", selectedFile);
-      formData.append("transaction_id", transactionId); // Use the transaction ID
+      formData.append("transaction_id", transactionId);
 
-      // Upload payment proof
       await uploadPaymentProof({ id: transactionId, formData }).unwrap();
 
       Swal.fire({
@@ -124,11 +122,9 @@ export default function GuestConfirmationPage() {
         text: "Bukti pembayaran berhasil dikirim. Mohon tunggu verifikasi admin.",
         confirmButtonText: "Kembali ke Beranda",
       }).then((result) => {
-        if (result.isConfirmed) {
-          router.push("/"); // Redirect to home
-        }
+        if (result.isConfirmed) router.push("/");
       });
-    } catch (error) {
+    } catch (err) {
       Swal.fire({
         icon: "error",
         title: "Gagal",
@@ -139,7 +135,6 @@ export default function GuestConfirmationPage() {
     }
   };
 
-  // Loading and error states
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -156,8 +151,7 @@ export default function GuestConfirmationPage() {
         </p>
         <button
           onClick={() => router.push("/")}
-          // Ganti warna teks error
-          className={`text-gray-700 hover:underline`}
+          className="text-gray-700 hover:underline"
         >
           Kembali ke Beranda
         </button>
@@ -165,7 +159,31 @@ export default function GuestConfirmationPage() {
     );
   }
 
-  // Status mapping
+  // Helper: safe parse JSON string fields like shipment_detail or product_detail
+  const safeParse = <
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(
+    raw?: string | null
+  ): T | null => {
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return null;
+    }
+  };
+
+  // Helper: obtain product image with fallback to media.original_url
+  const getProductImage = (p?: Product | undefined): string => {
+    if (!p) return "";
+    if (p.image) return p.image;
+    if (p.media && p.media.length > 0) {
+      return (p.media[0] as ProductMedia).original_url ?? "";
+    }
+    return "";
+  };
+
+  // Status text
   const getStatusText = (status: number) => {
     switch (status) {
       case 0:
@@ -184,23 +202,25 @@ export default function GuestConfirmationPage() {
     }
   };
 
-  // Calculate total price
-  const calculateTotal = () => {
-    let total = 0;
-    transactionData.stores?.forEach((store) => {
-      store.details.forEach((item) => {
-        total += item.total; // Add up product total
-      });
-    });
-    return total;
-  };
+  // Calculate totals based on shops (response uses "shops")
+  const totalProductPrice = (transactionData.shops ?? []).reduce(
+    (shopAcc, shop) => {
+      const shopSum = (shop.details ?? []).reduce(
+        (dAcc, d) => dAcc + (d.total ?? 0),
+        0
+      );
+      return shopAcc + shopSum;
+    },
+    0
+  );
 
-  const totalProductPrice = calculateTotal();
-  const totalWithShipping =
-    totalProductPrice + (transactionData.shipping_cost || 0);
+  const shippingCost = (transactionData.shops ?? []).reduce(
+    (acc, s) => acc + (s.shipment_cost ?? 0),
+    0
+  );
+  const totalWithShipping = totalProductPrice + shippingCost;
 
   return (
-    // Ganti gradient dari hijau muda ke abu-abu muda
     <div
       className={`min-h-screen bg-gradient-to-br from-white to-gray-100 pt-24 pb-12`}
     >
@@ -209,7 +229,6 @@ export default function GuestConfirmationPage() {
         <div className="mb-8">
           <button
             onClick={() => router.push("/")}
-            // Ganti warna hover
             className={`flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors mb-4`}
           >
             <ArrowLeft className="w-5 h-5" /> Kembali ke Beranda
@@ -217,7 +236,6 @@ export default function GuestConfirmationPage() {
 
           <div className="text-center">
             <div
-              // Ganti warna background dan teks
               className={`inline-flex items-center gap-2 ${ACCENT_BG_LIGHT} px-4 py-2 rounded-full mb-4`}
             >
               <CreditCard className={`w-4 h-4 ${ACCENT_TEXT_COLOR}`} />
@@ -238,11 +256,9 @@ export default function GuestConfirmationPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* === KOLOM KIRI: INSTRUKSI & UPLOAD === */}
+          {/* LEFT: instructions & upload */}
           <div className="lg:col-span-2 space-y-6">
-            {/* 1. Informasi Rekening & Nominal */}
             <div
-              // Ganti warna border aksen
               className={`bg-white rounded-3xl p-6 shadow-lg border-l-4 ${ACCENT_BORDER}`}
             >
               <h3 className="font-bold text-xl text-gray-900 mb-6 flex items-center gap-2">
@@ -251,10 +267,8 @@ export default function GuestConfirmationPage() {
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Bank Info */}
                 <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                   <div className="flex items-center gap-4 mb-4">
-                    {/* Logo Bank Dummy - Ganti dari biru ke abu-abu gelap */}
                     <div className="w-16 h-10 bg-gray-800 rounded flex items-center justify-center text-white font-bold italic">
                       BCA
                     </div>
@@ -274,7 +288,6 @@ export default function GuestConfirmationPage() {
                       </span>
                       <button
                         onClick={() => handleCopyRekening("8735089123")}
-                        // Ganti warna teks
                         className={`p-2 hover:bg-gray-100 rounded-lg transition-colors ${ACCENT_TEXT_COLOR}`}
                         title="Salin"
                       >
@@ -284,14 +297,12 @@ export default function GuestConfirmationPage() {
                   </div>
                 </div>
 
-                {/* Total Info */}
                 <div className="flex flex-col justify-center">
                   <p className="text-gray-600 mb-2">
                     Total yang harus dibayar:
                   </p>
                   <div className="flex items-center justify-between mb-4">
                     <span
-                      // Ganti warna teks
                       className={`text-3xl lg:text-4xl font-bold ${ACCENT_TEXT_COLOR}`}
                     >
                       {formatRupiahWithRp(totalWithShipping)}
@@ -300,13 +311,11 @@ export default function GuestConfirmationPage() {
                       onClick={() =>
                         handleCopyRekening(totalWithShipping.toString())
                       }
-                      // Ganti warna hover
                       className={`text-gray-400 hover:text-gray-700`}
                     >
                       <Copy className="w-5 h-5" />
                     </button>
                   </div>
-                  {/* Warna alert/warning tetap kuning untuk fungsionalitas */}
                   <div className="bg-yellow-50 text-yellow-800 px-4 py-3 rounded-xl text-sm flex items-start gap-2">
                     <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" />
                     <p>
@@ -318,7 +327,6 @@ export default function GuestConfirmationPage() {
               </div>
             </div>
 
-            {/* 2. Upload Bukti Bayar */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <h3 className="font-bold text-xl text-gray-900 mb-4 flex items-center gap-2">
                 <UploadCloud className={`w-6 h-6 ${ACCENT_TEXT_COLOR}`} />
@@ -354,7 +362,6 @@ export default function GuestConfirmationPage() {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8">
                     <div
-                      // Ganti warna background dan teks ikon upload
                       className={`w-16 h-16 ${ACCENT_BG_LIGHT} rounded-full flex items-center justify-center mb-4 ${ACCENT_TEXT_COLOR}`}
                     >
                       <Download className="w-8 h-8" />
@@ -372,7 +379,6 @@ export default function GuestConfirmationPage() {
               <button
                 onClick={handleUpload}
                 disabled={!selectedFile || isUploading}
-                // Ganti warna tombol dan shadow
                 className={`w-full mt-6 ${ACCENT_BG_COLOR} text-white py-4 rounded-2xl font-bold text-lg ${ACCENT_HOVER_BG} transition-all shadow-lg ${ACCENT_SHADOW} disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
               >
                 {isUploading ? (
@@ -390,9 +396,8 @@ export default function GuestConfirmationPage() {
             </div>
           </div>
 
-          {/* === KOLOM KANAN: DETAIL TRANSAKSI === */}
+          {/* RIGHT: detail */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Ringkasan Status */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <div className="flex justify-between items-center border-b border-gray-100 pb-4 mb-4">
                 <span className="text-gray-500">Tanggal Transaksi</span>
@@ -404,20 +409,15 @@ export default function GuestConfirmationPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-500">Status</span>
-                <span
-                  // Ganti warna status pending menjadi abu-abu muted
-                  className={`px-3 py-1 ${ACCENT_BG_LIGHT} text-gray-700 rounded-full text-sm font-bold capitalize`}
-                >
+                <span className="px-3 py-1 {ACCENT_BG_LIGHT} text-gray-700 rounded-full text-sm font-bold capitalize">
                   {getStatusText(transactionData.status)}
                 </span>
               </div>
             </div>
 
-            {/* Detail Pembeli & Pengiriman */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <User className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} />
-                Info Pembeli
+                <User className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} /> Info Pembeli
               </h3>
               <div className="space-y-3 text-sm text-gray-600 mb-6">
                 <div>
@@ -434,8 +434,8 @@ export default function GuestConfirmationPage() {
               </div>
 
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2 pt-4 border-t border-gray-100">
-                <MapPin className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} />
-                Alamat Pengiriman
+                <MapPin className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} /> Alamat
+                Pengiriman
               </h3>
               <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-xl">
                 <p className="font-medium text-gray-900 mb-1">
@@ -451,71 +451,84 @@ export default function GuestConfirmationPage() {
                   {transactionData.province_name} {transactionData.postal_code}
                 </p>
               </div>
+
               <div className="mt-4 flex items-center gap-2 text-sm">
                 <div
-                  // Ganti warna chip kurir
                   className={`${ACCENT_BG_LIGHT} text-gray-800 px-3 py-1 rounded-lg font-bold uppercase`}
                 >
-                  {transactionData.courier}
+                  {transactionData.courier ??
+                    transactionData.shops?.[0]?.courier ??
+                    ""}
                 </div>
-                <span className="text-gray-500">{transactionData.service}</span>
+                <span className="text-gray-500">
+                  {(transactionData.service as string | undefined) ??
+                    safeParse<{ service?: string }>(
+                      transactionData.shops?.[0]?.shipment_detail ?? null
+                    )?.service ??
+                    ""}
+                </span>
               </div>
             </div>
 
-            {/* Detail Produk */}
             <div className="bg-white rounded-3xl p-6 shadow-lg">
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Package className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} />
-                Detail Produk
+                <Package className={`w-5 h-5 ${ACCENT_TEXT_COLOR}`} /> Detail
+                Produk
               </h3>
 
               <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
-                {transactionData.stores?.map((store) =>
-                  store.details.map((item) => (
-                    <div key={item.id} className="flex gap-3">
-                      <div className="relative w-12 h-12 flex-shrink-0">
-                        <Image
-                          src={item.product.image}
-                          alt={item.product.name}
-                          fill
-                          className="object-cover rounded-lg bg-gray-100"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-bold text-gray-800 line-clamp-2">
-                          {item.product.name}
-                        </p>
-                        <div className="flex justify-between mt-1 text-xs">
-                          <span className="text-gray-500">
-                            {item.quantity} x Rp{" "}
-                            {formatRupiahWithRp(item.price)}
-                          </span>
-                          <span
-                            // Ganti warna teks harga
-                            className={`font-bold text-gray-800`}
-                          >
-                            {formatRupiahWithRp(item.quantity * item.price)}
-                          </span>
+                {/* flatten shops -> details */}
+                {transactionData.shops
+                  ?.flatMap((shop) =>
+                    shop.details.map((d) => ({ shop, detail: d }))
+                  )
+                  .map(({ shop, detail }) => {
+                    const product = detail.product;
+                    const img = getProductImage(product);
+                    return (
+                      <div key={detail.id} className="flex gap-3">
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                          {img ? (
+                            <Image
+                              src={img}
+                              alt={product?.name ?? "produk"}
+                              fill
+                              className="object-cover rounded-lg bg-gray-100"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-100 rounded-lg" />
+                          )}
+                        </div>
+
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-gray-800 line-clamp-2">
+                            {product?.name ?? "Produk"}
+                          </p>
+                          <div className="flex justify-between mt-1 text-xs">
+                            <span className="text-gray-500">
+                              {detail.quantity} x Rp{" "}
+                              {formatRupiahWithRp(detail.price)}
+                            </span>
+                            <span className="font-bold text-gray-800">
+                              {formatRupiahWithRp(
+                                detail.quantity * detail.price
+                              )}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-                )}
+                    );
+                  })}
               </div>
 
               <div className="mt-4 pt-4 border-t border-gray-100 space-y-2 text-sm">
                 <div className="flex justify-between text-gray-500">
                   <span>Ongkos Kirim</span>
-                  <span>
-                    {formatRupiahWithRp(transactionData.shipping_cost)}
-                  </span>
+                  <span>{formatRupiahWithRp(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg text-gray-900 pt-2">
                   <span>Total</span>
-                  <span
-                    // Ganti warna teks total akhir
-                    className={ACCENT_TEXT_COLOR}
-                  >
+                  <span className={ACCENT_TEXT_COLOR}>
                     {formatRupiahWithRp(totalWithShipping)}
                   </span>
                 </div>
