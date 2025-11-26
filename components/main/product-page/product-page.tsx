@@ -685,7 +685,7 @@ export default function ProductsPage() {
       </Suspense>
 
       {/* Top bar */}
-      <div className="border-b border-gray-200 bg-white shadow-sm pt-16">
+      <div className="border-b border-gray-200 bg-white shadow-sm md:pt-16">
         <div className="container mx-auto max-w-7xl px-4 py-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
@@ -779,7 +779,7 @@ export default function ProductsPage() {
                 </p>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-6">
                 {pageItems.map((product) => {
                   const img = getImageUrl(product);
                   const ratingNum = getNumberProp(product, "rating") ?? 0;
@@ -789,17 +789,19 @@ export default function ProductsPage() {
                   return (
                     <div
                       key={product.id}
-                      className="bg-white rounded-lg transition-all duration-300 overflow-hidden group relative border border-gray-100 shadow-sm"
+                      className="bg-white rounded-lg transition-all duration-300 overflow-hidden group relative border border-gray-100 shadow-sm flex flex-col"
                     >
-                      <div className="relative">
+                      {/* IMAGE - maintain proportion with aspect ratio */}
+                      <div className="relative w-full aspect-[3/4] overflow-hidden">
                         <Image
                           src={img}
                           alt={product.name}
-                          width={400}
-                          height={533}
-                          className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[10%]"
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 33vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[10%]"
                           unoptimized
                         />
+
                         <div
                           className={clsx(
                             "absolute top-4 right-4 flex flex-col gap-2 z-10 transition-opacity",
@@ -823,6 +825,7 @@ export default function ProductsPage() {
                               }`}
                             />
                           </button>
+
                           <button
                             onClick={() => openProductModal(product)}
                             className="p-2 bg-white text-gray-600 hover:text-black rounded-full shadow-lg transition-colors"
@@ -833,36 +836,43 @@ export default function ProductsPage() {
                         </div>
                       </div>
 
-                      <div className="p-4">
-                        <h3 className="line-clamp-1 font-semibold text-black uppercase tracking-wide">
-                          {product.name}
-                        </h3>
-                        <div className="mt-1 flex items-center justify-between">
-                          <div className="flex items-baseline gap-2">
-                            <span className="font-extrabold text-black text-lg">
-                              {formatCurrency(product.price)}
-                            </span>
+                      {/* CONTENT */}
+                      <div className="p-4 flex-1 flex flex-col justify-between min-h-[120px]">
+                        <div>
+                          <h3 className="line-clamp-1 font-semibold text-black uppercase tracking-wide">
+                            {product.name}
+                          </h3>
+
+                          <div className="mt-1 flex flex-wrap gap-y-2 items-center justify-between">
+                            <div className="flex items-baseline gap-2">
+                              <span className="font-extrabold text-black text-xs md:text-lg">
+                                {formatCurrency(product.price)}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1">
+                              <StarRating value={ratingNum} />
+                              <span className="text-xs text-gray-500">
+                                {totalReviews}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <StarRating value={ratingNum} />
-                            <span className="text-xs text-gray-500">
-                              {totalReviews}
-                            </span>
-                          </div>
+
+                          {product.stock <= 0 ? (
+                            <div className="mt-2 text-xs font-semibold text-red-600">
+                              Sold out — notify me
+                            </div>
+                          ) : (
+                            <div className="mt-2 text-xs text-gray-600">
+                              Stock: {product.stock} • Ready to ship
+                            </div>
+                          )}
                         </div>
-                        {product.stock <= 0 ? (
-                          <div className="mt-2 text-xs font-semibold text-red-600">
-                            Sold out — notify me
-                          </div>
-                        ) : (
-                          <div className="mt-2 text-xs text-gray-600">
-                            Stock: {product.stock} • Ready to ship
-                          </div>
-                        )}
+
                         <div className="mt-4">
                           <Button
                             onClick={() => openVariantModalFor(product)}
-                            className="w-full bg-black text-white hover:bg-gray-800 uppercase tracking-wider font-bold py-2.5 rounded-lg"
+                            className="text-xs md:text-lg w-full bg-black text-white hover:bg-gray-800 uppercase tracking-wider font-bold py-2.5 rounded-lg"
                           >
                             Add to Cart
                           </Button>
