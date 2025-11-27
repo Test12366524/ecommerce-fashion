@@ -14,7 +14,7 @@ export default function Home() {
         <RunningCarousel />
       </div>
       <Campaign />
-      <div className="px-10">
+      <div className="px-3 md:px-10">
         <AboutStore />
         <NewArrival />
         <ProductCategories />

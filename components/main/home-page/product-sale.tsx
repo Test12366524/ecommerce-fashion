@@ -193,10 +193,10 @@ export default function ProductSale() {
       <section className="mx-auto container md:px-4 py-12 md:py-20 bg-white">
         <div className="flex items-end justify-between border-b border-gray-200 pb-4 mb-4">
           <div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+            <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
               Best Sellers
             </h2>
-            <p className="text-base text-gray-600 mt-1">
+            <p className="text-sm md:text-base text-gray-600 mt-1">
               Loading top-selling products…
             </p>
           </div>
@@ -221,10 +221,10 @@ export default function ProductSale() {
       <section className="mx-auto container md:px-4 py-12 md:py-20 bg-white">
         <div className="flex items-end justify-between border-b border-gray-200 pb-4 mb-4">
           <div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+            <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
               Best Sellers
             </h2>
-            <p className="text-base text-gray-600 mt-1">
+            <p className="text-sm md:text-base text-gray-600 mt-1">
               Gagal memuat produk terlaris. Coba muat ulang.
             </p>
           </div>
@@ -232,7 +232,7 @@ export default function ProductSale() {
             href="/product?sale=true"
             className="rounded-lg bg-black px-5 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-md transition hover:bg-gray-800 border-2 border-black"
           >
-            View All
+            Lihat Semua
           </Link>
         </div>
       </section>
@@ -244,10 +244,10 @@ export default function ProductSale() {
       {/* Header Section */}
       <div className="flex items-end justify-between border-b border-gray-200 pb-4 mb-4">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+          <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
             New Arrivals
           </h2>
-          <p className="text-base text-gray-600 mt-1">
+          <p className="text-sm md:text-base text-gray-600 mt-1">
             {`Just Landed. Get Yours Before It's Gone`}
           </p>
         </div>
@@ -255,12 +255,12 @@ export default function ProductSale() {
           href="/product?sale=true"
           className="rounded-lg bg-black px-5 py-2 text-sm font-bold uppercase tracking-wider text-white shadow-md transition hover:bg-gray-800 border-2 border-black"
         >
-          View All
+          Lihat Semua
         </Link>
       </div>
 
       {/* Product Cards Grid */}
-      <div className="mt-8 grid gap-x-6 gap-y-10 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mt-8 grid gap-2 md:gap-x-6 md:gap-y-10 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((p) => {
           const hasDiscount = typeof p.was === "number" && p.was > p.price;
           const disc = hasDiscount

@@ -51,10 +51,10 @@ export default function ProductCategories() {
   if (isError) {
     return (
       <section className="mx-auto container md:px-4 py-12 md:py-20 bg-white">
-        <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+        <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
           Shop By Category
         </h2>
-        <p className="text-base text-gray-600 mt-1">
+        <p className="text-sm md:text-base text-gray-600 mt-1">
           Explore our curated collections.
         </p>
         <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
@@ -67,10 +67,10 @@ export default function ProductCategories() {
   return (
     <section className="mx-auto container md:px-4 py-12 md:py-20 bg-white">
       {/* Header Section: Black & White Styling */}
-      <h2 className="text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
+      <h2 className="text-xl md:text-3xl font-extrabold tracking-tight text-black md:text-4xl uppercase">
         Shop By Category
       </h2>
-      <p className="text-base text-gray-600 mt-1">
+      <p className="text-sm md:text-base text-gray-600 mt-1">
         Explore our curated collections.
       </p>
 
