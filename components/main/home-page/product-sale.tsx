@@ -289,7 +289,7 @@ export default function ProductSale() {
               </div>
 
               <div className="mt-4 flex flex-col">
-                <h3 className="line-clamp-1 text-base font-semibold text-black uppercase tracking-wide">
+                <h3 className="text-base font-semibold text-black uppercase tracking-wide">
                   {p.name}
                 </h3>
                 <div className="mt-1 flex items-baseline gap-2">

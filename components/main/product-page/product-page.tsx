@@ -839,7 +839,7 @@ export default function ProductsPage() {
                       {/* CONTENT */}
                       <div className="p-4 flex-1 flex flex-col justify-between min-h-[120px]">
                         <div>
-                          <h3 className="line-clamp-1 font-semibold text-black uppercase tracking-wide">
+                          <h3 className="font-semibold text-black uppercase tracking-wide">
                             {product.name}
                           </h3>
 

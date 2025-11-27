@@ -60,7 +60,7 @@ export default function CTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-6 uppercase tracking-tight"
+          className="text-xl md:text-5xl lg:text-6xl font-extrabold text-black mb-6 uppercase tracking-tight"
         >
           {t["cta-title-1"]} <br className="hidden sm:inline" />
           <span className="text-black border-b-4 border-black/80 pb-1">
@@ -73,7 +73,7 @@ export default function CTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-gray-700 text-lg md:text-xl font-medium mb-10 max-w-3xl mx-auto"
+          className="text-gray-700 text-sm md:text-xl font-medium mb-10 max-w-3xl mx-auto"
         >
           {t["cta-subtitle"]}
         </motion.p>
@@ -87,7 +87,7 @@ export default function CTA() {
           <Link
             href="/product"
             // Button Style: Black Solid, rounded, uppercase
-            className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-black text-white text-lg font-bold rounded-lg shadow-xl hover:bg-gray-800 transition-all uppercase tracking-wider"
+            className="inline-flex items-center justify-center gap-2 px-10 py-2 md:py-4 bg-black text-white text-sm md:text-lg font-bold rounded-lg shadow-xl hover:bg-gray-800 transition-all uppercase tracking-wider"
           >
             {t["cta-btn"]}
             <ArrowRight className="h-5 w-5" />
@@ -96,7 +96,7 @@ export default function CTA() {
           {/* Optional: Tambahkan secondary CTA */}
           <Link
             href="/about"
-            className="mt-4 md:mt-0 md:ml-6 block md:inline-block px-10 py-4 text-black text-lg font-semibold rounded-lg hover:text-gray-700 transition"
+            className="mt-0 md:ml-6 block md:inline-block px-10 py-4 text-black text-sm md:text-lg font-semibold rounded-lg hover:text-gray-700 transition"
           >
             Pelajari Lebih Lanjut
           </Link>

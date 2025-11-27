@@ -55,7 +55,7 @@ export default function TestimonialsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+            className="text-xl lg:text-5xl font-bold text-gray-900 mb-4"
           >
             Apa Kata Mereka?
           </motion.h2>
@@ -64,7 +64,7 @@ export default function TestimonialsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto"
+            className="text-sm md:text-lg text-gray-600 mb-12 max-w-2xl mx-auto"
           >
             Dengarkan pengalaman nyata dari pelanggan kami yang sudah merasakan
             manfaat ShopBLACKBOXINC.
