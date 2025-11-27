@@ -13,12 +13,14 @@ export default function Home() {
       <div className="w-full p-2 md:mt-10">
         <RunningCarousel />
       </div>
-      <Campaign />
       <div className="px-3 md:px-10">
-        <AboutStore />
         <NewArrival />
         <ProductCategories />
         <ProductSale />
+      </div>
+      <Campaign />
+      <div className="px-3 md:px-10">
+        <AboutStore />
       </div>
       <CTA />
       <Testimonials />
