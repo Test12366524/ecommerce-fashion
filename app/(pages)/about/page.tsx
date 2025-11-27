@@ -196,7 +196,7 @@ export default function AboutPage() {
       </div>
 
       {/* HERO */}
-      <section className="container mx-auto px-6 pb-20 pt-10">
+      <section className="container mx-auto px-6 pb-20 md:pt-10">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -273,7 +273,7 @@ export default function AboutPage() {
       </section>
 
       {/* VISION & MISSION */}
-      <section className="container mx-auto px-6 py-16">
+      <section className="container mx-auto px-6 md:py-16">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -306,7 +306,7 @@ export default function AboutPage() {
       </section>
 
       {/* VALUES */}
-      <section className="container mx-auto px-6 py-16">
+      <section className="container mx-auto px-6 py-6 md:py-16">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -343,7 +343,7 @@ export default function AboutPage() {
       </section>
 
       {/* ACHIEVEMENTS */}
-      <section className="container mx-auto px-6 py-16">
+      <section className="container mx-auto px-6 py-6 md:py-16">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -359,86 +359,6 @@ export default function AboutPage() {
             <Stat label="Koleksi" value="50+" />
             <Stat label="Kolaborasi" value="15+" />
             <Stat label="Tahun" value="5" />
-          </div>
-        </motion.div>
-      </section>
-
-      {/* TEAM */}
-      <section className="container mx-auto px-6 py-16">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-        >
-          <SectionTitle
-            title="Tim Kami"
-            subtitle="Profesional yang berdedikasi di balik setiap produk."
-          />
-          <div className="mt-10 grid grid-cols-2 gap-8 md:grid-cols-5">
-            <TeamCard
-              name="Ayu Pratama"
-              role="Founder & Creative Director"
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300&auto=format&fit=crop"
-            />
-            <TeamCard
-              name="Rina Cahya"
-              role="Pattern Maker"
-              src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=300&auto=format&fit=crop"
-            />
-            <TeamCard
-              name="Nanda Putri"
-              role="Head of Production"
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&auto=format&fit=crop"
-            />
-            <TeamCard
-              name="Dewi Lestari"
-              role="Brand Manager"
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&auto=format&fit=crop"
-            />
-            <TeamCard
-              name="Rafi Seto"
-              role="Stylist"
-              src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop"
-            />
-          </div>
-        </motion.div>
-      </section>
-
-      {/* TIMELINE */}
-      <section className="container mx-auto px-6 pb-24 pt-8">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={stagger}
-        >
-          <SectionTitle
-            title="Perjalanan"
-            subtitle="Tonggak penting brand sejak debut."
-          />
-          <div className="mt-10 space-y-8">
-            <TimelineItem
-              year="2018"
-              title="Debut Koleksi"
-              desc="Peluncuran koleksi kapsul pertama; fokus siluet minimalis."
-            />
-            <TimelineItem
-              year="2020"
-              title="Runway & Produksi"
-              desc="Showcase terbatas dan peningkatan kapasitas produksi."
-            />
-            <TimelineItem
-              year="2023"
-              title="Ekspansi & Kolaborasi"
-              desc="Kolaborasi dengan kreator lokal dan perluasan distribusi."
-            />
-            <TimelineItem
-              year="2025"
-              title="Flagship & Sustainability"
-              desc="Pembukaan flagship store dan lini bahan berkelanjutan."
-              last
-            />
           </div>
         </motion.div>
       </section>
