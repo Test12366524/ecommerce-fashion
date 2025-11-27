@@ -40,53 +40,47 @@ export function MarqueeBanner({
     return parts.length ? parts : [message];
   }, [message]);
 
-  // Chip & container sizing (sama seperti sebelumnya, hanya styling yang berubah)
+  // Chip & container sizing
   const sizing = useMemo(() => {
     switch (size) {
       case "sm":
         return {
-          containerPadX: "px-4",
-          containerPadY: "py-1.5",
-          trackHeight: "h-8",
-          chipText: "text-base font-semibold",
-          chipPad: "px-2.5 py-0.5",
-          gap: "gap-3",
+          containerHeight: "h-10",
+          itemGap: "gap-3",
           iconSize: "h-4 w-4",
-          headerPadTop: "pt-1.5",
+          textSize: "text-sm",
+          chipPad: "px-2.5 py-0.5",
         } as const;
       case "lg":
         return {
-          containerPadX: "px-6",
-          containerPadY: "py-2.5",
-          trackHeight: "h-12",
-          chipText: "text-xl",
-          chipPad: "px-4 py-1",
-          gap: "gap-5",
+          containerHeight: "h-16",
+          itemGap: "gap-5",
           iconSize: "h-6 w-6",
-          headerPadTop: "pt-2.5",
+          textSize: "text-lg",
+          chipPad: "px-4 py-1",
         } as const;
       default:
         return {
-          containerPadX: "px-5",
-          containerPadY: "py-1.5",
-          trackHeight: "h-9",
-          chipText: "text-lg",
-          chipPad: "px-3 py-0.5",
-          gap: "gap-4",
+          containerHeight: "h-12",
+          itemGap: "gap-4",
           iconSize: "h-5 w-5",
-          headerPadTop: "pt-1.5",
+          textSize: "text-base",
+          chipPad: "px-3 py-0.5",
         } as const;
     }
   }, [size]);
 
-  // Measure content width (logic remains the same)
+  // Measure content width
   useEffect(() => {
     const recalc = () => {
       const container = containerRef.current;
       const text = textRef.current;
       if (!container || !text) return;
+
+      // Add extra buffer to calculation
       const width = text.scrollWidth;
       setContentWidth(width);
+
       const pxPerSec = Math.max(24, speed);
       const d = Math.max(6, Math.round(width / pxPerSec));
       setDuration(d);
@@ -96,7 +90,13 @@ export function MarqueeBanner({
     const ro = new ResizeObserver(recalc);
     if (containerRef.current) ro.observe(containerRef.current);
     if (textRef.current) ro.observe(textRef.current);
-    return () => ro.disconnect();
+
+    // Slight delay to ensure fonts loaded
+    const timeout = setTimeout(recalc, 100);
+    return () => {
+      ro.disconnect();
+      clearTimeout(timeout);
+    };
   }, [items, speed]);
 
   const trackStyle = useMemo<TrackStyle>(
@@ -114,125 +114,100 @@ export function MarqueeBanner({
       onMouseEnter={() => pauseOnHover && setHovered(true)}
       onMouseLeave={() => pauseOnHover && setHovered(false)}
       className={[
-        "relative overflow-hidden shadow-xl",
-        // Black & White Theme: Black solid background
+        "relative flex items-center overflow-hidden shadow-xl w-full",
+        // Black & White Theme
         "bg-black text-white",
-        // No heavy gradient, just subtle ring
-        "ring-1 ring-gray-700", 
+        "ring-1 ring-gray-700",
+        sizing.containerHeight, // Height applied to container specifically
         className,
       ].join(" ")}
       aria-live="polite"
     >
-      {/* Animated sheen overlay (Reduced complexity for minimal look) */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.10]">
-        {/* Subtle shimmer effect */}
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,.15),transparent)] animate-[sheen_7s_linear_infinite]" />
-      </div>
-
-      {/* Header strip */}
+      {/* --- BAGIAN KIRI: FIXED ANNOUNCEMENT LABEL --- */}
+      {/* z-20 dan bg-black penting agar menutupi text yang lewat di belakangnya */}
       <div
         className={[
-          "relative z-10 flex items-center gap-2 px-4 text-sm/6 opacity-90 select-none",
-          sizing.headerPadTop,
-          "text-white", // Ensure header text is white
+          "relative z-20 flex flex-shrink-0 items-center gap-2 px-4 h-full bg-black shadow-[10px_0_20px_-5px_rgba(0,0,0,1)]",
+          "border-r border-white/10", // Optional separator
         ].join(" ")}
       >
-        {/* Status indicator (use gray/white dot) */}
-        <span className="relative inline-flex h-2 w-2 overflow-hidden rounded-full bg-white/70">
+        {/* Status Pulse */}
+        <span className="relative inline-flex h-2 w-2 flex-shrink-0 overflow-hidden rounded-full bg-white/70">
           <span className="absolute inset-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] rounded-full bg-white/50" />
         </span>
+
         <Megaphone className={`${sizing.iconSize} text-white`} aria-hidden />
-        <span className="font-medium tracking-wide uppercase">Announcement</span>
-        {cta ? (
-          cta.href ? (
+
+        <span className="font-medium tracking-wide uppercase text-sm hidden sm:inline-block">
+          Announcement
+        </span>
+      </div>
+
+      {/* --- BAGIAN TENGAH: MARQUEE TRACK --- */}
+      {/* flex-1 agar mengisi sisa ruang, overflow-hidden agar text terpotong rapi */}
+      <div className="relative flex-1 h-full overflow-hidden flex items-center">
+        {/* Gradient Fade di Kanan saja (kiri sudah tertutup label) */}
+        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-black to-transparent" />
+
+        <div className="relative w-full overflow-hidden">
+          <div
+            className="track flex whitespace-nowrap will-change-transform"
+            style={trackStyle}
+            role="marquee"
+          >
+            {/* Duplicate content for seamless loop */}
+            {[0, 1].map((key) => (
+              <div
+                key={key}
+                ref={key === 0 ? textRef : null}
+                className={`sequence inline-flex items-center ${sizing.itemGap} px-4`}
+                style={{ width: "var(--content-width)" }}
+              >
+                {items.map((it, i) => (
+                  <span
+                    key={`${key}-${i}`}
+                    className={[
+                      "chip inline-flex items-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm shadow-sm",
+                      sizing.chipPad,
+                      sizing.textSize,
+                      "font-medium whitespace-nowrap",
+                    ].join(" ")}
+                  >
+                    {it}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* --- BAGIAN KANAN: CTA BUTTON (Fixed Right) --- */}
+      {cta && (
+        <div className="relative z-20 flex flex-shrink-0 items-center px-4 h-full bg-black shadow-[-10px_0_20px_-5px_rgba(0,0,0,1)]">
+          {cta.href ? (
             <a
               href={cta.href}
               onClick={cta.onClick}
-              // CTA Button: White text, minimal background
-              className="ml-auto inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm hover:bg-white/20 transition-colors uppercase"
+              className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm hover:bg-white/20 transition-colors uppercase border border-white/10"
             >
               {cta.label}
             </a>
           ) : (
             <button
               onClick={cta.onClick}
-              // CTA Button: White text, minimal background
-              className="ml-auto inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm hover:bg-white/20 transition-colors uppercase"
+              className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm hover:bg-white/20 transition-colors uppercase border border-white/10"
             >
               {cta.label}
             </button>
-          )
-        ) : null}
-      </div>
-
-      {/* Marquee track */}
-      <div className="relative">
-        {/* Fading edges: use the darker background color (black) */}
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-black to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-black to-transparent" />
-
-        <div
-          className={[
-            "relative",
-            sizing.containerPadX,
-            sizing.containerPadY,
-          ].join(" ")}
-        >
-          <div
-            className={`relative mx-auto ${sizing.trackHeight} w-full overflow-hidden`}
-          >
-            <div
-              className="track absolute left-0 top-0 flex h-full whitespace-nowrap will-change-transform"
-              style={trackStyle}
-              role="marquee"
-              aria-label={Array.isArray(message) ? message.join(", ") : message}
-            >
-              {/* Duplicate content for seamless loop */}
-              <div
-                ref={textRef}
-                className={`sequence inline-flex items-center ${sizing.gap}`}
-                style={{ width: "var(--content-width)" }}
-              >
-                {items.map((it, i) => (
-                  <span
-                    key={`a-${i}`}
-                    className={[
-                      "chip inline-flex items-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm shadow-sm",
-                      sizing.chipPad,
-                      sizing.chipText,
-                      "font-medium", // Slightly softer text weight
-                    ].join(" ")}
-                  >
-                    {it}
-                  </span>
-                ))}
-              </div>
-              <div
-                className={`sequence inline-flex items-center ${sizing.gap}`}
-                style={{ width: "var(--content-width)" }}
-                aria-hidden
-              >
-                {items.map((it, i) => (
-                  <span
-                    key={`b-${i}`}
-                    className={[
-                      "chip inline-flex items-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm shadow-sm",
-                      sizing.chipPad,
-                      sizing.chipText,
-                      "font-medium",
-                    ].join(" ")}
-                  >
-                    {it}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
-      </div>
+      )}
 
-      {/* Subtle bottom border for depth */}
-      <div className="h-px w-full bg-white/20" />
+      {/* Subtle sheen overlay (Global) */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.05] z-30">
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,.2),transparent)] animate-[sheen_7s_linear_infinite]" />
+      </div>
 
       <style jsx>{`
         @keyframes marqueeSlide {
@@ -257,7 +232,6 @@ export function MarqueeBanner({
           animation-timing-function: linear;
           animation-iteration-count: infinite;
         }
-        /* Respect reduced motion */
         @media (prefers-reduced-motion: reduce) {
           .track {
             animation: none;

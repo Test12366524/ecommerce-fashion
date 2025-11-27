@@ -22,7 +22,7 @@ export default function Home() {
       <div className="px-3 md:px-10">
         <AboutStore />
       </div>
-      <CTA />
+      {/* <CTA /> */}
       <Testimonials />
     </div>
   );

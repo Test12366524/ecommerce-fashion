@@ -418,14 +418,14 @@ export default function Header() {
                   <Menu className="w-6 h-6 text-black" />
                 )}
               </button>
-              <button
+              {/* <button
                 onClick={() => setIsSearchOpen((v) => !v)}
                 className="p-2 rounded-full hover:bg-gray-100 transition-all md:hidden"
                 aria-label="Search"
                 aria-expanded={isSearchOpen}
               >
                 <Search className="w-5 h-5 text-black" />
-              </button>
+              </button> */}
               <button
                 onClick={() => setIsSearchOpen((v) => !v)}
                 className="p-2 rounded-full hover:bg-gray-100 transition-all hidden md:block"

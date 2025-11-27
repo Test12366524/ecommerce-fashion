@@ -41,10 +41,8 @@ export default function TestimonialsPage() {
 
   return (
     <>
-      <section className="px-6 lg:px-12 py-20 bg-gradient-to-b from-white to-[#6B6B6B]/10">
+      {/* <section className="px-6 lg:px-12 py-20 bg-gradient-to-b from-white to-[#6B6B6B]/10">
         <div className="container mx-auto text-center">
-          {/* Heading */}
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-[#6B6B6B] bg-[#6B6B6B]/20">
             <Sparkles className="w-4 h-4 text-#6B6B6B" />
             <span className="text-sm font-medium">Testimoni</span>
@@ -70,7 +68,6 @@ export default function TestimonialsPage() {
             manfaat ShopBLACKBOXINC.
           </motion.p>
 
-          {/* Testimonial Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((t, i) => (
               <motion.div
@@ -94,7 +91,6 @@ export default function TestimonialsPage() {
                 </h3>
                 <p className="text-sm text-[#6B6B6B] mb-4">{t.role}</p>
 
-                {/* Stars */}
                 <div className="flex gap-1 mb-4">
                   {Array(5)
                     .fill(0)
@@ -111,7 +107,7 @@ export default function TestimonialsPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
       {/* Customer Stats Section */}
       <section className="px-6 lg:px-12 py-16">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
