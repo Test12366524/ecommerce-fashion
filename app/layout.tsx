@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BLACKBOX.INC",
-  description: "Raih Kulit Sehat & Bersinar denganBLACKBOXINC Shop",
+  description: "Raih Kulit Sehat & Bersinar dengan BLACKBOX.INC Shop",
   icons: {
     icon: "/images/new/logo/BLACKBOXINC-Shop.png",
   },

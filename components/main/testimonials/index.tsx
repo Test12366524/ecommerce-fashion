@@ -19,7 +19,7 @@ export default function TestimonialsPage() {
       role: "Pelanggan Shop",
       image: "/avatars/1.jpeg",
       content:
-        "ProdukBLACKBOXINC bikin kulit aku lebih cerah dan lembap. Teksturnya ringan, gampang meresap, dan wanginya alami banget.",
+        "Produk BLACKBOX.INC bikin kulit aku lebih cerah dan lembap. Teksturnya ringan, gampang meresap, dan wanginya alami banget.",
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ export default function TestimonialsPage() {
       role: "Member Premium",
       image: "/avatars/2.jpeg",
       content:
-        "Sejak rutin pakaiBLACKBOXINC, kulitku terasa lebih sehat dan glowing. Customer service-nya juga super ramah.",
+        "Sejak rutin pakai BLACKBOX.INC, kulitku terasa lebih sehat dan glowing. Customer service-nya juga super ramah.",
     },
     {
       id: 3,
@@ -35,7 +35,7 @@ export default function TestimonialsPage() {
       role: "Pelanggan Setia",
       image: "/avatars/3.jpeg",
       content:
-        "Aku suka banget sama packaging dan kualitas produkBLACKBOXINC. Bener-bener brand Shop lokal yang premium.",
+        "Aku suka banget sama packaging dan kualitas produk BLACKBOX.INC. Bener-bener brand Shop lokal yang premium.",
     },
   ];
 
@@ -65,7 +65,7 @@ export default function TestimonialsPage() {
             className="text-sm md:text-lg text-gray-600 mb-12 max-w-2xl mx-auto"
           >
             Dengarkan pengalaman nyata dari pelanggan kami yang sudah merasakan
-            manfaat ShopBLACKBOXINC.
+            manfaat Shop BLACKBOX.INC.
           </motion.p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -161,7 +161,7 @@ export default function TestimonialsPage() {
             </motion.h3>
             <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
               Gabung dengan ribuan pelanggan yang sudah merasakan manfaat
-              ShopBLACKBOXINC. Mulailah perjalanan kulit sehat dan glowing Anda
+              Shop BLACKBOX.INC. Mulailah perjalanan kulit sehat dan glowing Anda
               hari ini.
             </p>
             <motion.button

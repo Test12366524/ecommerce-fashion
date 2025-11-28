@@ -152,7 +152,7 @@ export default function Campaign() {
         <div className="flex items-center justify-center gap-2">
           <Sparkles className="h-5 w-5 text-gray-400" />
           <p className="rounded-full border border-gray-700 bg-gray-800/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">
-            Blackboxinc Exclusive
+            BLACKBOX.INC Exclusive
           </p>
           <Sparkles className="h-5 w-5 text-gray-400" />
         </div>

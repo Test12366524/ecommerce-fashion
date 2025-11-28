@@ -163,12 +163,12 @@ export default function HowToOrderPage() {
       id: 6,
       title: "Terima & Beri Ulasan",
       description:
-        "Paket Blackboxinc tiba! Nikmati produk Anda dan bantu kami dengan memberikan ulasan.",
+        "Paket BLACKBOX.INC tiba! Nikmati produk Anda dan bantu kami dengan memberikan ulasan.",
       details: [
         "Periksa kondisi paket saat diterima",
         "Jika ada masalah, hubungi CS segera (sertakan video unboxing)",
         "Login dan berikan review produk untuk mendapatkan loyalty points",
-        "Tingkatkan gaya Anda dengan item Blackboxinc yang baru!",
+        "Tingkatkan gaya Anda dengan item BLACKBOX.INC yang baru!",
       ],
       icon: <Truck className="w-8 h-8" />,
       image: "images/new/order-steps/step-6.png", // Gambar Fashion
@@ -287,7 +287,7 @@ export default function HowToOrderPage() {
           {/* Title */}
           <h1 className="text-5xl lg:text-7xl font-extrabold text-black mb-6 uppercase tracking-tight">
             How To Order From
-            <span className="block text-gray-700">Blackboxinc</span>
+            <span className="block text-gray-700">BLACKBOX.INC</span>
           </h1>
 
           {/* Subtitle */}

@@ -567,7 +567,7 @@ export default function Header() {
               </div>
               <SearchEngine
                 className="w-full"
-                placeholder="Cari di Blackboxinc…"
+                placeholder="Cari di BLACKBOX.INC…"
                 autoFocusShortcut={false}
                 onClose={toggleMobileMenu}
               />

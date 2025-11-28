@@ -96,8 +96,8 @@ export default function TermsPage() {
             variants={fadeUp}
             className="mt-3 text-base md:text-lg text-gray-600"
           >
-            Syarat & Ketentuan penggunaan layanan BLACKBOXINC. Harap baca dengan
-            saksama sebelum menggunakan situs dan melakukan pemesanan.
+            Syarat & Ketentuan penggunaan layanan BLACKBOX.INC. Harap baca
+            dengan saksama sebelum menggunakan situs dan melakukan pemesanan.
           </motion.p>
           <motion.p variants={fadeUp} className="mt-2 text-xs text-gray-500">
             Terakhir diperbarui: {updated}
@@ -165,7 +165,7 @@ export default function TermsPage() {
             title="Penerimaan Ketentuan"
           >
             <p>
-              Dengan mengakses atau menggunakan situs/layanan BLACKBOXINC, Anda
+              Dengan mengakses atau menggunakan situs/layanan BLACKBOX.INC, Anda
               menyatakan telah membaca, memahami, dan menyetujui Syarat &
               Ketentuan ini beserta kebijakan terkait (termasuk{" "}
               <Link href="/privacy" className="underline underline-offset-4">
@@ -264,7 +264,7 @@ export default function TermsPage() {
           <Section id="ip" icon={Copyright} title="Hak Kekayaan Intelektual">
             <p>
               Seluruh konten situs (desain, logo, foto, teks, layout, kode)
-              adalah milik BLACKBOXINC atau pihak berlisensi, dilindungi oleh
+              adalah milik BLACKBOX.INC atau pihak berlisensi, dilindungi oleh
               undang‑undang hak cipta dan/atau merek. Dilarang menyalin,
               memodifikasi, mendistribusikan, atau mengeksploitasi tanpa izin
               tertulis.
@@ -305,7 +305,7 @@ export default function TermsPage() {
 
           <Section id="disclaimer" icon={ShieldAlert} title="Disclaimers">
             <p>
-             {` Layanan disediakan "sebagaimana adanya" dan "sebagaimana tersedia"
+              {` Layanan disediakan "sebagaimana adanya" dan "sebagaimana tersedia"
               tanpa jaminan eksplisit/implisit apa pun, termasuk namun tidak
               terbatas pada kelayakan untuk diperjualbelikan, kesesuaian untuk
               tujuan tertentu, dan non‑pelanggaran.`}
@@ -314,7 +314,7 @@ export default function TermsPage() {
 
           <Section id="liability" icon={Scale} title="Batas Tanggung Jawab">
             <p>
-              Sejauh diizinkan hukum, BLACKBOXINC tidak bertanggung jawab atas
+              Sejauh diizinkan hukum, BLACKBOX.INC tidak bertanggung jawab atas
               kerugian tidak langsung, insidental, khusus, konsekuensial, atau
               hukuman; termasuk kehilangan keuntungan, pendapatan, data, atau
               goodwill, yang timbul dari penggunaan atau ketidakmampuan
@@ -325,7 +325,7 @@ export default function TermsPage() {
           <Section id="indemnity" icon={Gavel} title="Ganti Rugi">
             <p>
               Anda setuju untuk membebaskan, mengganti rugi, dan menjaga
-              BLACKBOXINC beserta afiliasi/mitra/karyawan dari klaim, tuntutan,
+              BLACKBOX.INC beserta afiliasi/mitra/karyawan dari klaim, tuntutan,
               kewajiban, termasuk biaya hukum wajar yang timbul akibat
               pelanggaran Anda terhadap Ketentuan ini atau pelanggaran hukum/hak
               pihak ketiga.

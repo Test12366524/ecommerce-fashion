@@ -80,19 +80,17 @@ export default function ProductCategories() {
           <Link
             key={c.slug}
             href={`/product?category=${encodeURIComponent(c.slug)}`}
-            className="group relative overflow-hidden rounded-xl border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-black"
+            className="group relative block overflow-hidden rounded-xl border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-black aspect-square"
           >
-            {/* Image */}
-            <div className="relative h-48 w-full">
-              <Image
-                src={c.image || FALLBACK_IMG}
-                alt={c.label}
-                fill
-                sizes="(max-width: 768px) 100vw, 25vw"
-                className="object-cover grayscale-[15%] transition-transform duration-500 group-hover:scale-105"
-                priority={false}
-              />
-            </div>
+            {/* Image (fill akan menempel pada kotak persegi) */}
+            <Image
+              src={c.image || FALLBACK_IMG}
+              alt={c.label}
+              fill
+              sizes="(max-width: 768px) 100vw, 25vw"
+              className="object-cover grayscale-[15%] transition-transform duration-500 group-hover:scale-105"
+              priority={false}
+            />
 
             {/* Dark Overlay for Text Contrast */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />

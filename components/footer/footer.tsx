@@ -32,7 +32,7 @@ export default function Footer() {
   // Konten FAQ disesuaikan untuk Fashion
   const faqs = [
     {
-      question: "Apa kebijakan pengembalian produk Blackboxinc?",
+      question: "Apa kebijakan pengembalian produk BLACKBOX.INC?",
       answer:
         "Kami menerima pengembalian dan penukaran dalam 30 hari sejak tanggal pembelian, selama produk dalam kondisi asli (belum dipakai dan label masih lengkap).",
     },
@@ -64,14 +64,17 @@ export default function Footer() {
   
   // Mengganti logo Image dengan teks brand jika gambar logo tidak relevan dengan B&W
   const BrandLogo = () => (
-      <Link href="/" className="group inline-flex flex-col items-start select-none">
-          <h1 className="font-extrabold tracking-[0.2em] text-black text-xl leading-none">
-              BLACKBOXINC
-          </h1>
-          <span className="mt-1 text-[10px] uppercase tracking-[0.3em] text-gray-700">
-              Timeless Style
-          </span>
-      </Link>
+    <Link
+      href="/"
+      className="group inline-flex flex-col items-start select-none"
+    >
+      <h1 className="font-extrabold tracking-[0.2em] text-black text-xl leading-none">
+        BLACKBOX.INC
+      </h1>
+      <span className="mt-1 text-[10px] uppercase tracking-[0.3em] text-gray-700">
+        Timeless Style
+      </span>
+    </Link>
   );
 
 
@@ -89,7 +92,7 @@ export default function Footer() {
                 <p className="text-sm text-gray-700 leading-relaxed mt-4 mb-4 max-w-sm">
                   Curating timeless fashion pieces with uncompromising quality
                   and sleek, modern design. Elevate your wardrobe with
-                  Blackboxinc.
+                  BLACKBOX.INC.
                 </p>
 
                 {/* Values - Minimalist B&W */}
@@ -108,7 +111,6 @@ export default function Footer() {
                   </div>
                 </div>
 
-                {/* Contact Info */}
                 <div className="space-y-3 text-sm border-t border-gray-100 pt-4">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-4 h-4 mt-1 text-black flex-shrink-0" />
@@ -125,7 +127,6 @@ export default function Footer() {
                 </div>
               </div>
 
-              {/* Kolom 2: Quick Links */}
               <div className="col-span-1">
                 <h4 className="text-base font-extrabold mb-4 text-black uppercase tracking-wider">
                   Quick Links
@@ -147,7 +148,6 @@ export default function Footer() {
                 </ul>
               </div>
 
-              {/* Kolom 3: Customer Service Links */}
               <div className="col-span-1">
                 <h4 className="text-base font-extrabold mb-4 text-black uppercase tracking-wider">
                   Support
@@ -169,8 +169,7 @@ export default function Footer() {
                 </ul>
               </div>
 
-              {/* Kolom 4: FAQ (Accordion) */}
-              <div className="col-span-2 md:col-span-4 lg:col-span-1">
+              {/* <div className="col-span-2 md:col-span-4 lg:col-span-1">
                 <h4 className="text-base font-extrabold mb-4 text-black uppercase tracking-wider">
                   FAQ
                 </h4>
@@ -208,13 +207,12 @@ export default function Footer() {
                   <button
                     onClick={goTofaqPage}
                     type="button"
-                    // CTA Button: White/Bordered
                     className="w-full border border-black text-black py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
                   >
                     View All FAQs
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -225,7 +223,7 @@ export default function Footer() {
             <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
               {/* Copyright */}
               <p className="text-sm text-gray-600">
-                © {new Date().getFullYear()} **BLACKBOXINC**. All rights
+                © {new Date().getFullYear()} **BLACKBOX.INC**. All rights
                 reserved.
               </p>
 
@@ -238,7 +236,7 @@ export default function Footer() {
                   {/* Social Icons: B&W Style */}
                   <a
                     className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-700 transition-colors"
-                    href="https://www.instagram.com/BLACKBOXINC_Shop?igsh=MTN4MTE0anA2aXB4aA=="
+                    href="https://www.instagram.com/BLACKBOX.INC_Shop?igsh=MTN4MTE0anA2aXB4aA=="
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"

@@ -560,9 +560,10 @@ export default function LoginPage() {
       <div className="absolute bottom-32 right-16 w-16 h-16 bg-gray-600/10 rounded-full opacity-60 animate-pulse delay-1000" />
 
       <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
-        
         {/* Left Sidebar (Inverted B&W) */}
-        <div className={`${accentBg} p-8 lg:p-12 flex flex-col justify-center text-white relative overflow-hidden`}>
+        <div
+          className={`${accentBg} p-8 lg:p-12 flex flex-col justify-center text-white relative overflow-hidden`}
+        >
           {/* Subtle Accent Shapes B&W */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full" />
@@ -583,11 +584,13 @@ export default function LoginPage() {
 
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-black font-extrabold text-xl tracking-wider">B</span>
+                <span className="text-black font-extrabold text-xl tracking-wider">
+                  B
+                </span>
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white uppercase">
-                  BLACKBOXINC
+                  BLACKBOX.INC
                 </h1>
                 <p className="text-white/80 text-sm">Exclusive Fashion</p>
               </div>
@@ -655,7 +658,7 @@ export default function LoginPage() {
               <p className="text-gray-700">
                 {isLogin
                   ? "Enter your credentials to continue"
-                  : "Fill in the details below to join Blackboxinc"}
+                  : "Fill in the details below to join BLACKBOX.INC"}
               </p>
             </div>
 
@@ -664,9 +667,7 @@ export default function LoginPage() {
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-red-800 mb-1">
-                      Error:
-                    </h4>
+                    <h4 className="font-semibold text-red-800 mb-1">Error:</h4>
                     <ul className="text-sm text-red-700 space-y-1">
                       {errors.map((error) => (
                         <li key={error}>• {error}</li>
@@ -938,7 +939,10 @@ export default function LoginPage() {
                   />
                   <label htmlFor="terms" className="ml-3 text-sm text-gray-700">
                     I agree to the{" "}
-                    <a href="/terms" className="text-black hover:underline font-semibold">
+                    <a
+                      href="/terms"
+                      className="text-black hover:underline font-semibold"
+                    >
                       Terms & Conditions
                     </a>{" "}
                     and{" "}

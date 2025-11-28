@@ -38,7 +38,7 @@ const toNumber = (val: number | string | undefined): number => {
 };
 
 const IMG_FALLBACK =
-  "https://via.placeholder.com/400x400/000000/FFFFFF?text=BLACKBOXINC";
+  "https://via.placeholder.com/400x400/000000/FFFFFF?text=BLACKBOX.INC";
 
 function getImageUrl(p?: Product): string {
   if (!p) return IMG_FALLBACK;

@@ -54,7 +54,7 @@ export default function AboutStore() {
               Our Commitment
             </span>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-black md:text-4xl lg:text-5xl">
-              Blackboxinc — Timeless Style, Uncompromised Quality.
+              BLACKBOX.INC — Timeless Style, Uncompromised Quality.
             </h2>
             <p className="mt-5 text-base text-gray-700 md:text-lg">
               We meticulously curate fashion products with high quality
