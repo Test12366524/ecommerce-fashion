@@ -1,7 +1,6 @@
-// Campaign.tsx
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, Suspense, useRef } from "react";
 import Link from "next/link";
 import {
   Clock,
@@ -12,12 +11,21 @@ import {
   ShieldCheck,
   Headphones,
 } from "lucide-react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils"; // Menggunakan cn jika tersedia, atau clsx
 
-// pakai hook dari service kamu
+// Service Hook
 import { useGetVoucherListQuery } from "@/services/voucher.service";
 
-// === UI type (longgar, mengikuti response; field tertentu opsional)
+// --- IMPORTS MODE EDIT ---
+import { useEditMode } from "@/hooks/use-edit-mode";
+import { EditableText, EditableLink } from "@/components/ui/editable";
+import {
+  EditableSection,
+  BackgroundConfig,
+} from "@/components/ui/editable-section";
+import DotdLoader from "@/components/loader/3dot";
+
+// === UI type
 type UIVoucher = {
   id: number;
   code: string;
@@ -26,14 +34,14 @@ type UIVoucher = {
   fixed_amount?: number | null;
   percentage_amount?: number | null;
   type?: string;
-  start_date: string; // "YYYY-MM-DD"
-  end_date: string; // "YYYY-MM-DD"
+  start_date: string;
+  end_date: string;
   usage_limit?: number | null;
   used_count?: number | null;
   status?: boolean;
 };
 
-// === countdown
+// === countdown hook
 function useCountdown(target: Date | null) {
   const [now, setNow] = useState<Date>(() => new Date());
   useEffect(() => {
@@ -63,21 +71,74 @@ const parseYMD = (d: string) => {
   return new Date(y, (m ?? 1) - 1, day ?? 1);
 };
 
+// =========================================
+// DEFAULT EXPORT (WRAPPER SUSPENSE)
+// =========================================
 export default function Campaign() {
-  // ✅ FIX 1: kasih argumen page & paginate
+  return (
+    <Suspense
+      fallback={
+        <div className="h-96 w-full flex items-center justify-center bg-black text-white">
+          <DotdLoader />
+        </div>
+      }
+    >
+      <CampaignContent />
+    </Suspense>
+  );
+}
+
+// =========================================
+// CONTENT COMPONENT
+// =========================================
+function CampaignContent() {
+  const isEditMode = useEditMode();
+
+  // === 1. EDITABLE STATE: Background ===
+  // Default hitam gradient sesuai desain asli
+  const [bgConfig, setBgConfig] = useState<BackgroundConfig>({
+    type: "gradient",
+    color1: "#000000",
+    color2: "#111827", // gray-900
+    direction: "to bottom right",
+  });
+
+  // === 2. EDITABLE STATE: Labels & Static Texts ===
+  const [texts, setTexts] = useState({
+    badge: "BLACKBOX.INC Exclusive",
+    loading: "Loading vouchers...",
+    error: "Failed to load vouchers.",
+    labelDays: "Days",
+    labelHours: "Hours",
+    labelMins: "Minutes",
+    labelSecs: "Seconds",
+    ended: "Campaign Ended",
+    labelCoupon: "Coupon Code",
+    labelNote: "Apply at checkout. Terms & conditions apply.",
+    labelStock: "Limited Stock",
+    labelClaimed: "Claimed",
+    perk1: "30-Day Guarantee",
+    perk2: "Worldwide Shipping",
+    perk3: "24/7 Support",
+    ctaPrimary: "Shop Now",
+    ctaSecondary: "Learn More",
+  });
+
+  const updateText = (key: keyof typeof texts, val: string) => {
+    setTexts((prev) => ({ ...prev, [key]: val }));
+  };
+
+  // === VOUCHER LOGIC (Tetap Sama) ===
   const { data, isLoading, isError } = useGetVoucherListQuery({
     page: 1,
     paginate: 10,
   });
 
-  // ✅ FIX 2: hasil transformResponse = { data: Voucher[], ... }
   const vouchers: UIVoucher[] = (data?.data as UIVoucher[]) ?? [];
 
-  // pilih voucher prioritas: aktif → upcoming → terakhir
   const selected: UIVoucher | undefined = useMemo(() => {
     if (!vouchers.length) return undefined;
     const now = new Date();
-
     const withDates = vouchers.map((v) => ({
       v,
       start: parseYMD(v.start_date),
@@ -97,7 +158,6 @@ export default function Campaign() {
     return withDates.sort((a, b) => b.end.getTime() - a.end.getTime())[0].v;
   }, [vouchers]);
 
-  // tentukan target countdown & label
   const { target, phaseLabel, ended } = useMemo(() => {
     if (!selected)
       return { target: null, phaseLabel: "Campaign", ended: true as boolean };
@@ -113,7 +173,6 @@ export default function Campaign() {
 
   const { days, hours, minutes, seconds } = useCountdown(target);
 
-  // UI fields
   const code = selected?.code ?? "—";
   const name = selected?.name ?? "Seasonal Sale";
   const description =
@@ -125,7 +184,6 @@ export default function Campaign() {
     ? `Rp ${Number(selected.fixed_amount).toLocaleString("id-ID")} Off`
     : "Special Offer";
 
-  // ✅ FIX 3: field usage/used opsional
   const usageLimit = selected?.usage_limit ?? 0;
   const usedCount = selected?.used_count ?? 0;
   const percentClaimed =
@@ -144,31 +202,40 @@ export default function Campaign() {
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 via-black to-gray-900 opacity-90" />
-      <div className="absolute inset-x-0 -top-24 -z-10 h-48 bg-[radial-gradient(60%_60%_at_50%_100%,rgba(255,255,255,0.08),transparent)]" />
+    <EditableSection
+      isEditMode={isEditMode}
+      config={bgConfig}
+      onSave={setBgConfig}
+      className="relative isolate overflow-hidden text-white"
+    >
+      {/* Decorative Overlays (Tetap ada untuk estetika "Glow") */}
+      <div className="absolute inset-x-0 -top-24 -z-10 h-48 bg-[radial-gradient(60%_60%_at_50%_100%,rgba(255,255,255,0.08),transparent)] pointer-events-none" />
 
-      <div className="mx-auto container px-4 py-10 sm:py-12 md:py-16 lg:py-20">
+      <div className="mx-auto container px-4 py-10 sm:py-12 md:py-16 lg:py-20 relative z-10">
+        {/* Badge */}
         <div className="flex items-center justify-center gap-2">
           <Sparkles className="h-5 w-5 text-gray-400" />
-          <p className="rounded-full border border-gray-700 bg-gray-800/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-300">
-            BLACKBOX.INC Exclusive
-          </p>
+          <EditableText
+            isEditMode={isEditMode}
+            text={texts.badge}
+            onSave={(v) => updateText("badge", v)}
+            as="p"
+            className="rounded-full border border-gray-700 bg-gray-800/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-300"
+          />
           <Sparkles className="h-5 w-5 text-gray-400" />
         </div>
 
+        {/* Title (Dynamic Data from API, read-only mostly, style adjustable) */}
         <h2 className="mt-4 text-center text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
           {name} —{" "}
           <span className="underline decoration-gray-400/50">
             {discountText}
           </span>
         </h2>
+
+        {/* Description / Loading State */}
         <p className="mx-auto mt-3 max-w-2xl text-center text-base text-gray-400 sm:text-lg">
-          {isLoading
-            ? "Loading vouchers…"
-            : isError
-            ? "Failed to load vouchers."
-            : description}
+          {isLoading ? texts.loading : isError ? texts.error : description}
         </p>
 
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8 max-w-5xl mx-auto">
@@ -184,23 +251,35 @@ export default function Campaign() {
             {!ended ? (
               <div className="flex items-center justify-between text-white">
                 {[
-                  { label: "Days", value: days },
-                  { label: "Hours", value: hours },
-                  { label: "Minutes", value: minutes },
-                  { label: "Seconds", value: seconds },
+                  { key: "labelDays", value: days },
+                  { key: "labelHours", value: hours },
+                  { key: "labelMins", value: minutes },
+                  { key: "labelSecs", value: seconds },
                 ].map((seg) => (
-                  <div key={seg.label} className="flex flex-col items-center">
+                  <div key={seg.key} className="flex flex-col items-center">
                     <div className="min-w-[60px] md:min-w-[68px] rounded-lg bg-gray-800 px-3 py-2 text-center text-2xl md:text-3xl font-bold leading-none shadow-inner">
                       {String(seg.value).padStart(2, "0")}
                     </div>
-                    <span className="mt-1 text-[10px] uppercase tracking-wider text-gray-500">
-                      {seg.label}
-                    </span>
+                    {/* Editable Label (Days, Hours...) */}
+                    <EditableText
+                      isEditMode={isEditMode}
+                      text={texts[seg.key as keyof typeof texts]}
+                      onSave={(v) =>
+                        updateText(seg.key as keyof typeof texts, v)
+                      }
+                      as="span"
+                      className="mt-1 text-[10px] uppercase tracking-wider text-gray-500"
+                    />
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-400">Campaign has ended.</p>
+              <EditableText
+                isEditMode={isEditMode}
+                text={texts.ended}
+                onSave={(v) => updateText("ended", v)}
+                className="text-sm text-gray-400"
+              />
             )}
 
             {selected && (
@@ -215,9 +294,13 @@ export default function Campaign() {
           <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-5 backdrop-blur-sm shadow-lg">
             <div className="mb-3 flex items-center gap-2 text-gray-300">
               <Tag className="h-5 w-5" />
-              <span className="text-sm font-medium tracking-wide uppercase">
-                Coupon Code
-              </span>
+              <EditableText
+                isEditMode={isEditMode}
+                text={texts.labelCoupon}
+                onSave={(v) => updateText("labelCoupon", v)}
+                as="span"
+                className="text-sm font-medium tracking-wide uppercase"
+              />
             </div>
             <div className="flex items-center justify-between gap-3">
               <span className="rounded-lg bg-gray-800 px-4 py-2 font-mono text-lg font-bold tracking-wider text-white select-all">
@@ -225,31 +308,38 @@ export default function Campaign() {
               </span>
               <button
                 onClick={onCopy}
-                className={clsx(
+                className={cn(
                   "inline-flex items-center gap-2 rounded-lg border",
                   "border-gray-600 bg-gray-700 px-4 py-2 text-sm font-semibold text-white",
                   "transition-colors hover:bg-gray-600 hover:border-gray-500",
                   { "bg-black border-black": copied }
                 )}
-                aria-label="Copy coupon code"
                 disabled={!selected}
               >
                 <Zap className="h-4 w-4" />
                 {copied ? "Copied!" : "Copy"}
               </button>
             </div>
-            <p className="mt-3 text-sm text-gray-500">
-              Apply at checkout. Terms & conditions apply.
-            </p>
+            <EditableText
+              isEditMode={isEditMode}
+              text={texts.labelNote}
+              onSave={(v) => updateText("labelNote", v)}
+              as="p"
+              className="mt-3 text-sm text-gray-500"
+            />
           </div>
 
           {/* PROGRESS */}
           <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-5 backdrop-blur-sm shadow-lg">
             <div className="mb-3 flex items-center gap-2 text-gray-300">
               <Sparkles className="h-5 w-5 text-gray-400" />
-              <span className="text-sm font-medium tracking-wide uppercase">
-                Limited Stock
-              </span>
+              <EditableText
+                isEditMode={isEditMode}
+                text={texts.labelStock}
+                onSave={(v) => updateText("labelStock", v)}
+                as="span"
+                className="text-sm font-medium tracking-wide uppercase"
+              />
             </div>
             <div className="relative h-10 overflow-hidden rounded-lg border border-gray-600 bg-gray-800">
               <div
@@ -258,7 +348,7 @@ export default function Campaign() {
                 aria-hidden
               />
               <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-white">
-                {safePercent}% Claimed
+                {safePercent}% {texts.labelClaimed}
               </div>
             </div>
             <p className="mt-3 text-sm text-gray-500">
@@ -269,44 +359,65 @@ export default function Campaign() {
           </div>
         </div>
 
-        {/* PERKS */}
+        {/* PERKS (Editable) */}
         <div className="mt-12 grid grid-cols-1 gap-4 text-gray-300 sm:grid-cols-3 max-w-4xl mx-auto">
           <div className="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
             <ShieldCheck className="h-5 w-5 text-gray-400" />
-            <span className="text-sm font-medium uppercase tracking-wide">
-              30-Day Guarantee
-            </span>
+            <EditableText
+              isEditMode={isEditMode}
+              text={texts.perk1}
+              onSave={(v) => updateText("perk1", v)}
+              as="span"
+              className="text-sm font-medium uppercase tracking-wide"
+            />
           </div>
           <div className="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
             <Truck className="h-5 w-5 text-gray-400" />
-            <span className="text-sm font-medium uppercase tracking-wide">
-              Worldwide Shipping
-            </span>
+            <EditableText
+              isEditMode={isEditMode}
+              text={texts.perk2}
+              onSave={(v) => updateText("perk2", v)}
+              as="span"
+              className="text-sm font-medium uppercase tracking-wide"
+            />
           </div>
           <div className="flex items-center gap-3 rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
             <Headphones className="h-5 w-5 text-gray-400" />
-            <span className="text-sm font-medium uppercase tracking-wide">
-              24/7 Support
-            </span>
+            <EditableText
+              isEditMode={isEditMode}
+              text={texts.perk3}
+              onSave={(v) => updateText("perk3", v)}
+              as="span"
+              className="text-sm font-medium uppercase tracking-wide"
+            />
           </div>
         </div>
 
-        {/* CTA */}
+        {/* CTA (Editable) */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
+          <EditableLink
+            isEditMode={isEditMode}
+            label={texts.ctaPrimary}
             href="/product?campaign=voucher"
+            onSave={(l) => updateText("ctaPrimary", l)}
             className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-base font-bold text-black transition hover:bg-gray-200 uppercase tracking-wide shadow-lg"
-          >
-            Shop Now
-          </Link>
-          <Link
+          />
+          <EditableLink
+            isEditMode={isEditMode}
+            label={texts.ctaSecondary}
             href="/how-to-order"
+            onSave={(l) => updateText("ctaSecondary", l)}
             className="inline-flex items-center justify-center rounded-lg border border-gray-600 bg-transparent px-8 py-3 text-base font-semibold text-gray-300 transition hover:bg-gray-800 hover:text-white uppercase tracking-wide"
-          >
-            Learn More
-          </Link>
+          />
         </div>
       </div>
-    </section>
+
+      {/* Indikator Mode Edit */}
+      {isEditMode && (
+        <div className="absolute top-4 left-4 z-50 bg-blue-600/80 text-white text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider pointer-events-none backdrop-blur-sm">
+          Editable
+        </div>
+      )}
+    </EditableSection>
   );
 }
